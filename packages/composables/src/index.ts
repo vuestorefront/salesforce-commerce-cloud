@@ -1,5 +1,8 @@
 /* istanbul ignore file */
 
+// Needed for the api-client, as commerce-sdk is not a direct dependency here
+import * as _ from 'commerce-sdk'; // eslint-disable-line @typescript-eslint/no-unused-vars
+
 export { default as useBilling } from './useBilling';
 export { default as useCart } from './useCart';
 export { default as useCategory } from './useCategory';

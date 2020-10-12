@@ -4,6 +4,17 @@ import { AxiosInstance } from 'axios';
 import { CookieOptions } from 'express';
 import { ApiInstance, IntegrationContext } from '@vue-storefront/core';
 import * as Apis from './api/clients/interfaces';
+import { Customer as SdkCustomer } from 'commerce-sdk';
+
+export type Customer = SdkCustomer.ShopperCustomers.Customer & {
+  birthday?: Date;
+  creationDate?: Date;
+  lastLoginTime?: Date;
+  lastModified?: Date;
+  lastVisitTime?: Date;
+  previousLoginTime?: Date;
+  previousVisitTime?: Date;
+};
 
 export type Cart = Record<string, unknown>;
 export type Wishlist = Record<string, unknown>;
@@ -40,6 +51,7 @@ export type SfccIntegrationContext = IntegrationContext<ApiClients, ApiClientSet
 export type Endpoints = {
   guestSignIn(context: SfccIntegrationContext): Promise<void>;
   refreshToken(context: SfccIntegrationContext): Promise<void>;
+  signIn(context: SfccIntegrationContext, username: string, password: string): Promise<Customer>;
 };
 
 export type ContextualizedEndpoints = {

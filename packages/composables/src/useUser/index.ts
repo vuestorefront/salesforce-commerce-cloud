@@ -1,49 +1,41 @@
 /* istanbul ignore file */
 
 import {
-  Context,
   useUserFactory,
   UseUserFactoryParams
 } from '@vue-storefront/core';
-import { User } from '../types';
+import { Context, Customer } from '@vue-storefront/sfcc-api';
 
 // @todo useUser
 
-const params: UseUserFactoryParams<User, any, any> = {
+const params: UseUserFactoryParams<Customer, any, any> = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   load: async (context: Context) => {
     console.log('Mocked: loadUser');
-    return {};
+    return { customerNo: null, lastName: null };
   },
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  logOut: async (context: Context) => {
-    console.log('Mocked: logOut');
-  },
+  logOut: async (context: Context): Promise<void> => context.$sfcc.api.guestSignIn(),
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateUser: async (context: Context, { currentUser, updatedUserData }) => {
     console.log('Mocked: updateUser');
-    return {};
+    return { customerNo: null, lastName: null };
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   register: async (context: Context, { email, password, firstName, lastName }) => {
     console.log('Mocked: register');
-    return {};
+    return { customerNo: null, lastName: null };
   },
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  logIn: async (context: Context, { username, password }) => {
-    console.log('Mocked: logIn');
-    return {};
-  },
+  logIn: async (context: Context, { username, password }): Promise<Customer> => context.$sfcc.api.signIn(username, password),
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   changePassword: async (context: Context, { currentUser, currentPassword, newPassword }) => {
     console.log('Mocked: changePassword');
-    return {};
+    return { customerNo: null, lastName: null };
   }
 };
 
-export default useUserFactory<User, any, any>(params);
+export default useUserFactory<Customer, any, any>(params);
