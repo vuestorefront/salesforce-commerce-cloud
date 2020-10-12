@@ -9,11 +9,7 @@ import { Context, Customer } from '@vue-storefront/sfcc-api';
 // @todo useUser
 
 const params: UseUserFactoryParams<Customer, any, any> = {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  load: async (context: Context) => {
-    console.log('Mocked: loadUser');
-    return { customerNo: null, lastName: null };
-  },
+  load: async (context: Context): Promise<Customer> => context.$sfcc.api.getCustomer(),
 
   logOut: async (context: Context): Promise<void> => context.$sfcc.api.guestSignIn(),
 

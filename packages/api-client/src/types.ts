@@ -52,6 +52,7 @@ export type Endpoints = {
   guestSignIn(context: SfccIntegrationContext): Promise<void>;
   refreshToken(context: SfccIntegrationContext): Promise<void>;
   signIn(context: SfccIntegrationContext, username: string, password: string): Promise<Customer>;
+  getCustomer(context: SfccIntegrationContext): Promise<Customer>;
 };
 
 export type ContextualizedEndpoints = {

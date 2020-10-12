@@ -5,7 +5,7 @@ import { getObjectFromResponse } from '@commerce-apps/core';
 import { CustomersApi } from './interfaces';
 import { Customer as ApiCustomer } from '../../types';
 import { mapOcapiCustomer } from '../mapping/ocapi/ocapiCustomerMapping';
-import { getTokenFromAuthHeader } from '../helpers/jwt';
+import { getCustomerIdFromToken, getTokenFromAuthHeader } from '../helpers/jwt';
 
 export class OcapiCustomersApi implements CustomersApi {
   protected config: ShopApi.ApiConfig;
@@ -14,6 +14,10 @@ export class OcapiCustomersApi implements CustomersApi {
   constructor(config: ShopApi.ApiConfig) {
     this.config = config;
     this.api = new ShopApi.CustomersApi();
+  }
+
+  protected getCustomerId() {
+    return getCustomerIdFromToken(this.config.oauth2AccessToken);
   }
 
   async guestSignIn(): Promise<string> {
@@ -48,13 +52,31 @@ export class OcapiCustomersApi implements CustomersApi {
 
     return { customer, token };
   }
+
+  async getCustomer(): Promise<ApiCustomer> {
+    const customerId = this.getCustomerId();
+    const customer = customerId && await this.api.getCustomersByID(customerId, {
+      expand: ['addresses', 'paymentinstruments']
+    });
+
+    return customer && mapOcapiCustomer(customer);
+  }
 }
 
 export class CapiCustomersApi implements CustomersApi {
+  protected config: ClientConfig;
   protected api: Customer.ShopperCustomers;
 
   constructor(config: ClientConfig) {
+    this.config = config;
     this.api = new Customer.ShopperCustomers(config);
+  }
+
+  protected getCustomerId() {
+    const token = getTokenFromAuthHeader(this.config.headers.authorization);
+    const customerId = token && getCustomerIdFromToken(token);
+
+    return customerId;
   }
 
   async guestSignIn(): Promise<string> {
@@ -94,5 +116,16 @@ export class CapiCustomersApi implements CustomersApi {
     const token = getTokenFromAuthHeader(response.headers.get('authorization'));
 
     return { customer, token };
+  }
+
+  async getCustomer(): Promise<ApiCustomer> {
+    const customerId = this.getCustomerId();
+    const customer = customerId && await this.api.getCustomer({
+      parameters: {
+        customerId: customerId
+      }
+    });
+
+    return customer;
   }
 }
