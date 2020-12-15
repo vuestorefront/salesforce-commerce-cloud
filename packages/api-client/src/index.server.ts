@@ -1,25 +1,33 @@
+import ShopApi from 'commercecloud-ocapi-client';
 import { apiClientFactory } from '@vue-storefront/core';
-import getProduct from './api/getProduct';
-import getCategory from './api/getCategory';
 
-const defaultSettings = {};
+import { buildClientConfig } from './api/config/configBuilder';
+import { buildConfig as buildOcapiConfig } from './api/config/ocapiConfig';
+import { ApiClientSettings, Endpoints, SfccSetupConfig } from './types';
 
-const onCreate = (settings) => ({
-  config: {
-    ...defaultSettings,
-    ...settings
-  },
-  client: {}
-});
+import api from './api/endpoints';
+import extensions from './api/extensions';
 
-const { createApiClient } = apiClientFactory<any, any>({
+const onCreate = (config: ApiClientSettings): SfccSetupConfig => {
+  const ocapiClient = new ShopApi.ApiClient(buildOcapiConfig(config));
+
+  ShopApi.ApiClient.instance = ocapiClient;
+
+  return {
+    api: {},
+    config,
+    client: buildClientConfig(config)
+  };
+};
+
+const { createApiClient } = apiClientFactory<ApiClientSettings, Endpoints>({
   onCreate,
-  api: {
-    getProduct,
-    getCategory
-  }
+  api,
+  extensions
 });
 
 export {
   createApiClient
 };
+
+export * from './types';

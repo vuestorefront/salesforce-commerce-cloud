@@ -1,5 +1,9 @@
 {
   "extends": "../../tsconfig.base.json",
   "include": ["src"],
-  "exclude": ["node_modules", "lib"]
+  "exclude": ["node_modules", "lib"],
+  "compilerOptions": {
+    "lib": ["es6", "es7", "dom"],
+    "experimentalDecorators": true
+  }
 }

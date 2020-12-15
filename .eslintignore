@@ -1,4 +1,5 @@
 **/node_modules/**/*
+**/server/*
 **/lib/*
 packages/composables/nuxt/plugin.js
 packages/theme/_theme

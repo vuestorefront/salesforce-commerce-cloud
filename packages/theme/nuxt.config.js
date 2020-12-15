@@ -1,4 +1,5 @@
 import webpack from 'webpack';
+import sfccConfig from './middleware.config';
 
 export default {
   mode: 'universal',
@@ -71,7 +72,7 @@ export default {
     /* project-only-start
     ['@vue-storefront/nuxt-theme'],
     project-only-end */
-    ['@vue-storefront/sfcc/nuxt', {}]
+    ['@vue-storefront/sfcc/nuxt', sfccConfig.integrations.sfcc.configuration]
   ],
   modules: [
     'nuxt-i18n',
@@ -80,9 +81,11 @@ export default {
     '@vue-storefront/middleware/nuxt'
   ],
   i18n: {
-    locales: ['en'],
+    locales: [
+      { code: 'en' },
+      { code: 'de' }
+    ],
     defaultLocale: 'en',
-    strategy: 'no_prefix',
     vueI18n: {
       fallbackLocale: 'en',
       messages: {
@@ -99,6 +102,11 @@ export default {
     scss: [require.resolve('@storefront-ui/shared/styles/_helpers.scss', { paths: [process.cwd()] })]
   },
   build: {
+    babel: {
+      plugins: [
+        '@babel/plugin-proposal-optional-chaining'
+      ]
+    },
     transpile: [
       'vee-validate/dist/rules'
     ],
