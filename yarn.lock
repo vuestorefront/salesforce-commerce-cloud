@@ -2840,27 +2840,28 @@
     "@typescript-eslint/types" "4.13.0"
     eslint-visitor-keys "^2.0.0"
 
-"@vue-storefront/core@^2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@vue-storefront/core/-/core-2.2.0.tgz#b90e0b9c38d89608daa56e47a3151ddc39beee27"
-  integrity sha512-S6R8DHs4hQ4g5ZvtoFw+bT0xSJ5pM58JXd48sPYHU2QIzDmeCCBJ4YN7uQoG8H5/mkVwHIPaygJwZoc89VDMrg==
+"@vue-storefront/core@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@vue-storefront/core/-/core-2.2.1.tgz#7be69893a356a774d0c1de9926bdd8979100ea05"
+  integrity sha512-Uo6jsqQndEX9X/JGb4k/+CoO7QwoUrum5efXvREIEXoiDrVjuag4jzPly3k9lSq3zs9mivUkhYJR5lJd0JsFTA==
   dependencies:
     "@vue/composition-api" "1.0.0-beta.21"
     express "^4.17.1"
     lodash-es "^4.17.15"
     vue "^2.6.11"
 
-"@vue-storefront/nuxt-theme@^2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@vue-storefront/nuxt-theme/-/nuxt-theme-2.2.0.tgz#a296a034c700121e8931bc0c3fcef1f9112c7304"
-  integrity sha512-D+8eSTRJGGFFUnuqJRrO+v9hsoyn8WqVvPZhxEFMaBUN4DRnr/dGvyTKP6phpot3qzc3rnz93g9+7PRPQcagnA==
+"@vue-storefront/nuxt-theme@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@vue-storefront/nuxt-theme/-/nuxt-theme-2.2.1.tgz#9f061949bc8bebb26c13a4480ad8aac4421e98ab"
+  integrity sha512-R8AYv7mZMJ89HtdXHXuww60Qx8Ozqxg1jsgYasCxsEYFZRU2w6oOxNN+ZSWMiV1lFkx5809IrRNIF2W/BGULJg==
   dependencies:
     lodash.merge "^4.6.2"
+    vue-lazy-hydration "^2.0.0-beta.4"
 
-"@vue-storefront/nuxt@^2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@vue-storefront/nuxt/-/nuxt-2.2.0.tgz#202aaa1298c2f7ecf1524f9d8d5e622a54c08eb3"
-  integrity sha512-FLXZZEUM9k1v5GL8KdyW0hMH6qRU2Ck8Ldiu0esPgpSfnikuaLsGcNSkgxBamcf+xiWyp1f2DJmuyA+KHGuBEQ==
+"@vue-storefront/nuxt@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@vue-storefront/nuxt/-/nuxt-2.2.1.tgz#eae558b3e10f156b08d6a1395863eaed5a05ec31"
+  integrity sha512-izHBbadOR9Z6rbJ1IyTnqloX3MmvcwBM8TOPMN4E/NdCK9P5q6eKBcElTzIZeAqjE6EQEUd5GIJJZNguRuULXg==
   dependencies:
     "@nuxt/typescript-build" "^2.0.0"
     "@nuxtjs/composition-api" "0.17.0"
