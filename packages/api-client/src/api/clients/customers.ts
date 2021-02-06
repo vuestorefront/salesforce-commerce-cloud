@@ -61,6 +61,21 @@ export class OcapiCustomersApi implements CustomersApi {
 
     return customer && mapOcapiCustomer(customer);
   }
+
+  async createCustomer(email: string, password: string, firstName: string, lastName: string): Promise<ApiCustomer> {
+    const customer = await this.api.postCustomers({
+      password,
+      customer: {
+        enabled: true,
+        email: email,
+        login: email,
+        first_name: firstName, // eslint-disable-line camelcase
+        last_name: lastName // eslint-disable-line camelcase
+      }
+    });
+
+    return mapOcapiCustomer(customer);
+  }
 }
 
 export class CapiCustomersApi implements CustomersApi {
@@ -123,6 +138,23 @@ export class CapiCustomersApi implements CustomersApi {
     const customer = customerId && await this.api.getCustomer({
       parameters: {
         customerId: customerId
+      }
+    });
+
+    return customer;
+  }
+
+  async createCustomer(email: string, password: string, firstName: string, lastName: string): Promise<ApiCustomer> {
+    const customer = await this.api.registerCustomer({
+      body: {
+        password,
+        customer: {
+          enabled: true,
+          login: email,
+          email,
+          firstName,
+          lastName
+        }
       }
     });
 

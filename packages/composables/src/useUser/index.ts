@@ -19,11 +19,7 @@ const params: UseUserFactoryParams<Customer, any, any> = {
     return { customerNo: null, lastName: null };
   },
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  register: async (context: Context, { email, password, firstName, lastName }) => {
-    console.log('Mocked: register');
-    return { customerNo: null, lastName: null };
-  },
+  register: async (context: Context, {email, password, firstName, lastName}): Promise<Customer> => context.$sfcc.api.createCustomer(email, password, firstName, lastName),
 
   logIn: async (context: Context, { username, password }): Promise<Customer> => context.$sfcc.api.signIn(username, password),
 

@@ -5,4 +5,5 @@ export interface CustomersApi {
   refreshToken(): Promise<string>;
   signIn(username: string, password: string): Promise<{ customer: Customer, token: string }>;
   getCustomer(): Promise<Customer>;
+  createCustomer(email: string, password: string, firstName: string, lastName: string): Promise<Customer>;
 }

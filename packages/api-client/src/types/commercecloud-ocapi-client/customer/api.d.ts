@@ -3,6 +3,10 @@ declare module 'commercecloud-ocapi-client' {
   export type GetCustomersOptions = {
     expand?: GetCustomersExpandOptions[];
   };
+  export type CustomerRegistration = {
+    customer: Customer;
+    password: string;
+  };
   export type PostCustomersAuthBody = {
     type: AuthRequest.TypeEnum;
   };
@@ -16,6 +20,7 @@ declare module 'commercecloud-ocapi-client' {
   export class CustomersApi {
     constructor();
     getCustomersByID(customerId: string, opts?: GetCustomersOptions): Promise<Customer>;
+    postCustomers(body: CustomerRegistration): Promise<Customer>;
     postCustomersAuthWithHttpInfo(body: PostCustomersAuthBody, opts?: PostCustomersAuthOptions): Promise<PostCustomersAuthResult>;
   }
 }

@@ -6,6 +6,7 @@ import signIn from './signIn';
 import getCustomer from './getCustomer';
 import getProduct from '../getProduct';
 import getCategory from '../getCategory';
+import createCustomer from './createCustomer';
 
 import { wrapAuthHandler } from './helpers/auth';
 
@@ -14,6 +15,7 @@ const endpoints = {
   refreshToken,
   signIn,
   getCustomer,
+  createCustomer,
   getProduct,
   getCategory,
 }
