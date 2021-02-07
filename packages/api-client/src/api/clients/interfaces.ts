@@ -1,4 +1,4 @@
-import { Customer } from '../../types';
+import { Customer, Category } from '../../types';
 
 export interface CustomersApi {
   guestSignIn(): Promise<string>;
@@ -8,4 +8,8 @@ export interface CustomersApi {
   createCustomer(email: string, password: string, firstName: string, lastName: string): Promise<Customer>;
   updateCustomer(email: string, firstName: string, lastName: string): Promise<Customer>;
   updateCustomerPassword(currentPassword: string, newPassword: string): Promise<Customer>;
+}
+
+export interface CategoriesApi {
+  getCategory(id: string, levels?: number, locale?: string): Promise<Category>;
 }

@@ -4,6 +4,11 @@ export type Address = Record<string, unknown>;
 
 export type Category = Record<string, unknown>;
 
+export type CategorySearchParams = {
+  slug: string;
+  target?: 'menu';
+};
+
 export type User = {
   firstName?: string;
   lastName?: string;

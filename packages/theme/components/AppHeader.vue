@@ -12,8 +12,14 @@
         </nuxt-link>
       </template>
       <template #navigation>
-        <SfHeaderNavigationItem class="nav-item" data-cy="app-header-url_women" label="WOMEN" :link="localePath('/c/women')"/>
-        <SfHeaderNavigationItem class="nav-item"  data-cy="app-header-url_men" label="MEN" :link="localePath('/c/men')" />
+        <SfHeaderNavigationItem
+          class="nav-item"
+          v-for="category in topLevelCategories"
+          :key="category.id"
+          :label="category.name"
+          :link="localePath('/c/' + category.id)"
+          :data-cy="'app-header-url_' + category.id"
+        />
       </template>
       <template #aside>
         <LocaleSelector class="smartphone-only" />
@@ -96,7 +102,7 @@
 <script>
 import { SfHeader, SfImage, SfIcon, SfButton, SfBadge, SfSearchBar, SfOverlay } from '@storefront-ui/vue';
 import { useUiState } from '~/composables';
-import { useCart, useWishlist, useUser, cartGetters, useFacet } from '<%= options.generate.replace.composables %>';
+import { useCart, useCategory, useWishlist, useUser, cartGetters, useFacet } from '@vue-storefront/sfcc';
 import { computed, ref, onBeforeUnmount, watch } from '@vue/composition-api';
 import { onSSR } from '@vue-storefront/core';
 import { useUiHelpers } from '~/composables';
@@ -126,6 +132,7 @@ export default {
     const { toggleCartSidebar, toggleWishlistSidebar, toggleLoginModal } = useUiState();
     const { setTermForUrl, getFacetsFromURL, getSearchTermFromUrl} = useUiHelpers();
     const { result, search } = useFacet();
+    const { search: searchCategories, categories } = useCategory();
     const { isAuthenticated, load: loadUser } = useUser();
     const { cart, load: loadCart } = useCart();
     const { load: loadWishlist } = useWishlist();
@@ -136,6 +143,13 @@ export default {
     const cartTotalItems = computed(() => {
       const count = cartGetters.getTotalItems(cart.value);
       return count ? count.toString() : null;
+    });
+    const topLevelCategories = computed(() => {
+      if (categories && categories.value) {
+        return categories.value;
+      }
+
+      return [];
     });
 
     const accountIcon = computed(() => isAuthenticated.value ? 'profile_fill' : 'profile');
@@ -153,6 +167,7 @@ export default {
       await loadUser();
       await loadCart();
       await loadWishlist();
+      await searchCategories({ slug: 'root', target: 'menu' });
     });
 
     const closeSearch = () => {
@@ -196,6 +211,7 @@ export default {
     });
 
     return {
+      topLevelCategories,
       accountIcon,
       cartTotalItems,
       handleAccountClick,

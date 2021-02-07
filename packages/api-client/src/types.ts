@@ -4,7 +4,10 @@ import { AxiosInstance } from 'axios';
 import { CookieOptions } from 'express';
 import { ApiInstance, IntegrationContext } from '@vue-storefront/core';
 import * as Apis from './api/clients/interfaces';
-import { Customer as SdkCustomer } from 'commerce-sdk';
+import {
+  Product as SdkProduct,
+  Customer as SdkCustomer
+} from 'commerce-sdk';
 
 export type Customer = SdkCustomer.ShopperCustomers.Customer & {
   birthday?: Date;
@@ -29,19 +32,17 @@ export type ProductVariant = {
     original: number;
     current: number;
   };
-  };
-export type Category = {
-  id: number;
-  name: string;
-  slug: string;
-  items: Category[];
+}
+export type Category = SdkProduct.ShopperProducts.Category & {
+  c_showInMenu: boolean;
 };
 export type CategoryFilter = Record<string, unknown>;
 export type ShippingMethod = Record<string, unknown>;
 export type LineItem = Record<string, unknown>;
 
 export type ApiClients = {
-  CustomersApi: Apis.CustomersApi
+  CustomersApi: Apis.CustomersApi,
+  CategoriesApi: Apis.CategoriesApi
 }
 
 export type SfccSetupConfig = IntegrationContext<ApiClients, ApiClientSettings>;
@@ -56,6 +57,7 @@ export type Endpoints = {
   createCustomer(context: SfccIntegrationContext, email: string, password: string, firstName: string, lastName: string): Promise<Customer>;
   updateCustomer(context: SfccIntegrationContext, email: string, firstName: string, lastName: string): Promise<Customer>;
   updateCustomerPassword(context: SfccIntegrationContext, currentPassword: string, newPassword: string): Promise<Customer>;
+  getCategory(context: SfccIntegrationContext, id: string, levels?: number): Promise<Category>;
 };
 
 export type ContextualizedEndpoints = {
