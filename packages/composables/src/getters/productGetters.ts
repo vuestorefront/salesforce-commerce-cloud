@@ -4,49 +4,51 @@ import {
   AgnosticPrice,
   ProductGetters
 } from '@vue-storefront/core';
-import { ProductVariant } from '@vue-storefront/sfcc-api';
+import { Product } from '@vue-storefront/sfcc-api';
 
-type ProductVariantFilters = any
+type ProductFilters = any
 
 // TODO: Add interfaces for some of the methods in core
 // Product
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getProductName = (product: ProductVariant): string => product?.name || 'Product\'s name';
+export const getProductName = (product: Product): string => product.name;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getProductSlug = (product: ProductVariant): string => product.sku;
+export const getProductSlug = (product: Product): string => {
+  if (product.name) {
+    return product.name.toLowerCase().replace(/\s+/g, '-');
+  }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getProductPrice = (product: ProductVariant): AgnosticPrice => {
+  return '';
+};
+
+export const getProductPrice = (product: Product): AgnosticPrice => {
+  if (product.price.original) {
+    return {
+      regular: product.price.original,
+      special: product.price.current
+    };
+  }
+
   return {
-    regular: product?.price?.original || 0,
-    special: product?.price?.current || 0
+    regular: product.price.current
   };
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getProductGallery = (product: ProductVariant): AgnosticMediaGalleryItem[] => [
-  {
-    small: 'https://s3-eu-west-1.amazonaws.com/commercetools-maximilian/products/081223_1_large.jpg',
-    normal: 'https://s3-eu-west-1.amazonaws.com/commercetools-maximilian/products/081223_1_large.jpg',
-    big: 'https://s3-eu-west-1.amazonaws.com/commercetools-maximilian/products/081223_1_large.jpg'
-  },
-  {
-    small: 'https://s3-eu-west-1.amazonaws.com/commercetools-maximilian/products/081223_1_large.jpg',
-    normal: 'https://s3-eu-west-1.amazonaws.com/commercetools-maximilian/products/081223_1_large.jpg',
-    big: 'https://s3-eu-west-1.amazonaws.com/commercetools-maximilian/products/081223_1_large.jpg'
-  }
-];
+export const getProductGallery = (product: Product): AgnosticMediaGalleryItem[] => {
+  return product.images.map((image) => ({
+    small: `${image}?sw=560&sh=747`,
+    normal: `${image}?sw=560&sh=747`,
+    big: `${image}?sw=560&sh=747`
+  }));
+};
+
+export const getProductCoverImage = (product: Product): string => getProductGallery(product)[0].big;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getProductCoverImage = (product: ProductVariant): string => 'https://s3-eu-west-1.amazonaws.com/commercetools-maximilian/products/081223_1_large.jpg';
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getProductFiltered = (products: ProductVariant[], filters: ProductVariantFilters | any = {}): ProductVariant[] => {
+export const getProductFiltered = (products: Product[], filters: ProductFilters | any = {}): Product[] => {
   return [
     {
-      _id: 1,
+      _id: '1',
       _description: 'Some description',
       _categoriesRef: [
         '1',
@@ -63,7 +65,7 @@ export const getProductFiltered = (products: ProductVariant[], filters: ProductV
       }
     },
     {
-      _id: 2,
+      _id: '2',
       _description: 'Some different description',
       _categoriesRef: [
         '1',
@@ -84,25 +86,23 @@ export const getProductFiltered = (products: ProductVariant[], filters: ProductV
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getProductAttributes = (products: ProductVariant[] | ProductVariant, filterByAttributeName?: string[]): Record<string, AgnosticAttribute | string> => {
+export const getProductAttributes = (products: Product[] | Product, filterByAttributeName?: string[]): Record<string, AgnosticAttribute | string> => {
   return {};
 };
 
-export const getProductDescription = (product: ProductVariant): any => (product as any)?._description || '';
+export const getProductDescription = (product: Product): any => product._description;
 
-export const getProductCategoryIds = (product: ProductVariant): string[] => (product as any)?._categoriesRef || '';
+export const getProductCategoryIds = (product: Product): string[] => product._categoriesRef;
 
-export const getProductId = (product: ProductVariant): string => (product as any)?._id || '';
+export const getProductId = (product: Product): string => product._id;
 
-export const getFormattedPrice = (price: number) => String(price);
+export const getFormattedPrice = (price: number) => price && String(price);
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getProductTotalReviews = (product: ProductVariant): number => 0;
+export const getProductTotalReviews = (): number => 0;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getProductAverageRating = (product: ProductVariant): number => 0;
+export const getProductAverageRating = (): number => 0;
 
-const productGetters: ProductGetters<ProductVariant, ProductVariantFilters> = {
+const productGetters: ProductGetters<Product, ProductFilters> = {
   getName: getProductName,
   getSlug: getProductSlug,
   getPrice: getProductPrice,

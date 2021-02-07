@@ -1,4 +1,9 @@
-import { Customer, Category } from '../../types';
+import {
+  Customer,
+  Category,
+  ProductSearchParams,
+  ProductSearchResponse
+} from '../../types';
 
 export interface CustomersApi {
   guestSignIn(): Promise<string>;
@@ -12,4 +17,8 @@ export interface CustomersApi {
 
 export interface CategoriesApi {
   getCategory(id: string, levels?: number, locale?: string): Promise<Category>;
+}
+
+export interface ProductSearchApi {
+  searchProducts(params: ProductSearchParams, locale?: string): Promise<ProductSearchResponse>;
 }

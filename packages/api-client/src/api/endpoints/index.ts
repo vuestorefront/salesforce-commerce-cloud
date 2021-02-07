@@ -9,6 +9,7 @@ import getCategory from './getCategory';
 import createCustomer from './createCustomer';
 import updateCustomer from './updateCustomer';
 import updateCustomerPassword from './updateCustomerPassword';
+import searchProducts from './searchProducts';
 
 import { wrapAuthHandler } from './helpers/auth';
 
@@ -20,6 +21,7 @@ const endpoints = {
   createCustomer,
   updateCustomer,
   updateCustomerPassword,
+  searchProducts,
   getProduct,
   getCategory,
 }

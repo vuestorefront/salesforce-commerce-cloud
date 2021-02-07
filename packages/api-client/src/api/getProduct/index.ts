@@ -7,4 +7,3 @@ export default async function getProduct(context, params, customQuery?: CustomQu
     total: 0
   });
 }
-

@@ -1,4 +1,12 @@
-export { UseCategory, UseProduct } from '@vue-storefront/core';
+import { FacetSearchResult } from '@vue-storefront/core';
+
+import {
+  ProductSearchRefinement,
+  ProductSearchHit,
+  ProductHitTypeSearchParam,
+  ProductSortingOption,
+  ProductSearchParams as ApiProductSearchParams
+} from '@vue-storefront/sfcc-api';
 
 export type Address = Record<string, unknown>;
 
@@ -8,6 +16,25 @@ export type CategorySearchParams = {
   slug: string;
   target?: 'menu';
 };
+
+export type ProductSearchParams = ApiProductSearchParams & {
+  promoId?: string;
+  orderableOnly?: boolean;
+  hitType?: ProductHitTypeSearchParam;
+  filters: ProductSearchRefinement[];
+};
+
+export type FacetResultsData = {
+  products: ProductSearchHit[];
+  categories: ProductSearchRefinement;
+  facets: ProductSearchRefinement[];
+  total: number;
+  sortOptions: ProductSortingOption[];
+  perPageOptions: number[];
+  itemsPerPage: number;
+};
+
+export type SearchData = FacetSearchResult<FacetResultsData>;
 
 export type User = {
   firstName?: string;

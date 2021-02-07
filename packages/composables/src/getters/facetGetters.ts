@@ -1,77 +1,165 @@
+import { SearchData } from '../types';
+import {
+  Product,
+  ProductSearchRefinement,
+  ProductSearchRefinementValue,
+  ProductSortingOption
+} from '@vue-storefront/sfcc-api';
 import {
   FacetsGetters,
+  AgnosticBreadcrumb,
   AgnosticCategoryTree,
   AgnosticGroupedFacet,
-  AgnosticPagination,
+  AgnosticFacet,
   AgnosticSort,
-  AgnosticBreadcrumb,
-  AgnosticFacet
+  AgnosticPagination
 } from '@vue-storefront/core';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getAll = (searchData, criteria?: string[]): AgnosticFacet[] => [];
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getGrouped = (searchData, criteria?: string[]): AgnosticGroupedFacet[] =>[];
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getSortOptions = (searchData): AgnosticSort => ({ options: [], selected: '' });
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getCategoryTree = (searchData): AgnosticCategoryTree => ({} as any);
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getProducts = (searchData): any => {
-  return [
-    {
-      _id: 1,
-      _description: 'Some description',
-      _categoriesRef: [
-        '1',
-        '2'
-      ],
-      name: 'Black jacket',
-      sku: 'black-jacket',
-      images: [
-        'https://s3-eu-west-1.amazonaws.com/commercetools-maximilian/products/081223_1_large.jpg'
-      ],
-      price: {
-        original: 12.34,
-        current: 10.00
-      }
-    },
-    {
-      _id: 2,
-      _description: 'Some different description',
-      _categoriesRef: [
-        '1',
-        '2',
-        '3'
-      ],
-      name: 'White shirt',
-      sku: 'white-shirt',
-      images: [
-        'https://s3-eu-west-1.amazonaws.com/commercetools-maximilian/products/081223_1_large.jpg'
-      ],
-      price: {
-        original: 15.11,
-        current: 11.00
-      }
-    }
-  ];
-};
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getPagination = (searchData): AgnosticPagination => ({
-  currentPage: 1,
-  totalPages: 1,
-  totalItems: 0,
-  itemsPerPage: 10,
-  pageOptions: []
+const mapFilterValueToAgnosticFacet = (filter: ProductSearchRefinement, value: ProductSearchRefinementValue): AgnosticFacet => ({
+  type: 'attribute',
+  attrName: filter.attributeId,
+  id: value.value,
+  value: value.value,
+  count: value.hitCount,
+  selected: value.selected
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getBreadcrumbs = (searchData): AgnosticBreadcrumb[] => [];
+const mapFilterToGroupedFacet = (filter: ProductSearchRefinement): AgnosticGroupedFacet => ({
+  id: filter.attributeId,
+  label: filter.label,
+  options: filter.values.map(mapFilterValueToAgnosticFacet.bind(null, filter))
+});
+
+const getAll = (searchData: SearchData): AgnosticFacet[] => {
+  if (!searchData.data) {
+    return [];
+  }
+
+  return searchData.data.facets.reduce((acc, filter) => [
+    ...acc,
+    ...mapFilterToGroupedFacet(filter).options
+  ], []);
+};
+
+const getGrouped = (searchData: SearchData): AgnosticGroupedFacet[] => {
+  if (!searchData.data) {
+    return [];
+  }
+
+  return searchData.data.facets.map(mapFilterToGroupedFacet);
+};
+
+const mapSortOptionToAgnosticFacet = (sortOption: ProductSortingOption): AgnosticFacet => ({
+  ...sortOption,
+  type: 'sort',
+  value: sortOption.label,
+  attrName: sortOption.label
+});
+
+const getSortOptions = (searchData: SearchData): AgnosticSort => {
+  if (!searchData.data) {
+    return {
+      options: [],
+      selected: null
+    };
+  }
+
+  const options = searchData.data.sortOptions.map(mapSortOptionToAgnosticFacet);
+  const selectedOption = options.find((option) => option.selected) || options[0];
+  const selected = selectedOption && selectedOption.id;
+
+  return {
+    options,
+    selected
+  };
+};
+
+const mapCategoryToAgnosticTree = (category: ProductSearchRefinementValue): AgnosticCategoryTree => ({
+  label: category.label,
+  isCurrent: category.selected,
+  slug: category.presentationId || category.value,
+  items: (category.values && category.values.map(mapCategoryToAgnosticTree)) || []
+});
+
+const getCategoryTree = (searchData: SearchData): AgnosticCategoryTree => {
+  if (!searchData.data || !searchData.data.categories) {
+    return {
+      isCurrent: false,
+      label: '',
+      items: []
+    };
+  }
+
+  return {
+    isCurrent: false,
+    label: searchData.data.categories.label,
+    items: searchData.data.categories.values.map(mapCategoryToAgnosticTree)
+  };
+};
+
+const getProducts = (searchData: SearchData): Product[] => {
+  if (!searchData.data) {
+    return [];
+  }
+
+  return searchData.data.products;
+};
+
+const getPagination = (searchData: SearchData): AgnosticPagination => {
+  if (!searchData.data) {
+    return {
+      totalItems: 0,
+      currentPage: 1,
+      itemsPerPage: 0,
+      pageOptions: [],
+      totalPages: 1
+    };
+  }
+
+  return {
+    totalItems: searchData.data.total,
+    currentPage: searchData.input.page,
+    itemsPerPage: searchData.data.itemsPerPage,
+    pageOptions: searchData.data.perPageOptions,
+    totalPages: Math.ceil(searchData.data.total / searchData.data.itemsPerPage) || 1
+  };
+};
+
+const getSelectedCategoryPath = (categories: ProductSearchRefinementValue[], selectedCategories?: ProductSearchRefinementValue[]): ProductSearchRefinementValue[] => {
+  const selected = categories.reduce((acc, category) => {
+    if (category.selected) {
+      return [...acc, category];
+    }
+
+    if (category.values) {
+      const selectedSubcategories = getSelectedCategoryPath(category.values || []);
+
+      if (selectedSubcategories.length) {
+        return [...acc, category, ...selectedSubcategories];
+      }
+    }
+
+    return acc;
+  }, []);
+
+  return (selectedCategories || []).concat(selected);
+};
+
+const getBreadcrumbs = (searchData: SearchData): AgnosticBreadcrumb[] => {
+  let selectedCategoryPath = [];
+
+  if (searchData.data && searchData.data.categories) {
+    selectedCategoryPath = getSelectedCategoryPath(searchData.data.categories.values);
+  }
+
+  return [{
+    text: 'Home',
+    link: '/'
+  }].concat(selectedCategoryPath.map((category) => ({
+    text: category.label,
+    link: `/c/${category.id}`
+  })));
+};
 
 const facetGetters: FacetsGetters<any, any> = {
   getSortOptions,
