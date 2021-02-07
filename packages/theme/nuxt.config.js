@@ -1,5 +1,6 @@
 import webpack from 'webpack';
 import sfccConfig from './middleware.config';
+import StringReplacePlugin from 'string-replace-webpack-plugin';
 
 export default {
   mode: 'universal',
@@ -102,6 +103,24 @@ export default {
     scss: [require.resolve('@storefront-ui/shared/styles/_helpers.scss', { paths: [process.cwd()] })]
   },
   build: {
+    // TODO Handle these in theme files
+    extend(config) {
+      config.module.rules.push({
+        test: /Product\.vue$/,
+        loader: StringReplacePlugin.replace({
+          replacements: [
+            {
+              pattern: /\.\.\.filter/,
+              replacement: () => '...Object.entries(filter).reduce((acc, [key, attr]) => ({ ...acc, [key]: attr.value || attr }), {})'
+            },
+            {
+              pattern: /options\.color\.length > 1/,
+              replacement: () => 'options.color.length > 0'
+            }
+          ]
+        })
+      });
+    },
     babel: {
       plugins: [
         '@babel/plugin-proposal-optional-chaining'
@@ -111,6 +130,7 @@ export default {
       'vee-validate/dist/rules'
     ],
     plugins: [
+      new StringReplacePlugin(),
       new webpack.DefinePlugin({
         'process.VERSION': JSON.stringify({
           // eslint-disable-next-line global-require

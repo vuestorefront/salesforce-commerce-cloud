@@ -1,6 +1,7 @@
 import {
   Customer,
   Category,
+  Product,
   ProductSearchParams,
   ProductSearchResponse
 } from '../../types';
@@ -21,4 +22,8 @@ export interface CategoriesApi {
 
 export interface ProductSearchApi {
   searchProducts(params: ProductSearchParams, locale?: string): Promise<ProductSearchResponse>;
+}
+
+export interface ProductsApi {
+  getProduct(id: string, viewType?: string, locale?: string): Promise<Product>;
 }

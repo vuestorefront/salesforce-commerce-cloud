@@ -22,6 +22,14 @@ export type Customer = SdkCustomer.ShopperCustomers.Customer & {
 
 export type Cart = Record<string, unknown>;
 export type Wishlist = Record<string, unknown>;
+export type VariationAttributeValue = SdkProduct.ShopperProducts.VariationAttributeValue & {
+  selected: boolean;
+};
+export type VariationAttribute = SdkProduct.ShopperProducts.VariationAttribute & {
+  values?: VariationAttributeValue[]
+};
+export type Variant = SdkProduct.Products.Variant;
+
 export type Product = {
   _id: string;
   _description: string;
@@ -29,6 +37,9 @@ export type Product = {
   name: string;
   sku: string;
   images: string[];
+  attributes?: VariationAttribute[];
+  variationValues?: { [key: string]: string };
+  variants?: Variant[];
   price: {
     original: number;
     current: number;
@@ -77,6 +88,7 @@ export type LineItem = Record<string, unknown>;
 export type ApiClients = {
   CustomersApi: Apis.CustomersApi,
   CategoriesApi: Apis.CategoriesApi,
+  ProductsApi: Apis.ProductsApi,
   ProductSearchApi: Apis.ProductSearchApi
 }
 
@@ -94,6 +106,7 @@ export type Endpoints = {
   updateCustomerPassword(context: SfccIntegrationContext, currentPassword: string, newPassword: string): Promise<Customer>;
   getCategory(context: SfccIntegrationContext, id: string, levels?: number): Promise<Category>;
   searchProducts(context: SfccIntegrationContext, params: ProductSearchParams): Promise<ProductSearchResponse>;
+  getProduct(context: SfccIntegrationContext, id: string): Promise<Product>;
 };
 
 export type ContextualizedEndpoints = {
@@ -113,6 +126,7 @@ export interface ApiClientSettings {
   jwtToken?: string;
   cache?: boolean;
   timeout?: number;
+  viewType?: string;
   enableCookies?: boolean;
   overrideHttpPut?: boolean;
   defaultHeaders?: Record<string, string>;

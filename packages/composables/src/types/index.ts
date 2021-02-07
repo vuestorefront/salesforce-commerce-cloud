@@ -17,6 +17,12 @@ export type CategorySearchParams = {
   target?: 'menu';
 };
 
+export type UseProductParams = {
+  id?: string;
+  catId?: string;
+  limit?: number;
+};
+
 export type ProductSearchParams = ApiProductSearchParams & {
   promoId?: string;
   orderableOnly?: boolean;
