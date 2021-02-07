@@ -54,6 +54,8 @@ export type Endpoints = {
   signIn(context: SfccIntegrationContext, username: string, password: string): Promise<Customer>;
   getCustomer(context: SfccIntegrationContext): Promise<Customer>;
   createCustomer(context: SfccIntegrationContext, email: string, password: string, firstName: string, lastName: string): Promise<Customer>;
+  updateCustomer(context: SfccIntegrationContext, email: string, firstName: string, lastName: string): Promise<Customer>;
+  updateCustomerPassword(context: SfccIntegrationContext, currentPassword: string, newPassword: string): Promise<Customer>;
 };
 
 export type ContextualizedEndpoints = {

@@ -16,8 +16,8 @@ export class OcapiCustomersApi implements CustomersApi {
     this.api = new ShopApi.CustomersApi();
   }
 
-  protected getCustomerId() {
-    return getCustomerIdFromToken(this.config.oauth2AccessToken);
+  protected getCustomerId(registeredOnly?: boolean) {
+    return getCustomerIdFromToken(this.config.oauth2AccessToken, registeredOnly);
   }
 
   async guestSignIn(): Promise<string> {
@@ -54,7 +54,7 @@ export class OcapiCustomersApi implements CustomersApi {
   }
 
   async getCustomer(): Promise<ApiCustomer> {
-    const customerId = this.getCustomerId();
+    const customerId = this.getCustomerId(true);
     const customer = customerId && await this.api.getCustomersByID(customerId, {
       expand: ['addresses', 'paymentinstruments']
     });
@@ -76,6 +76,34 @@ export class OcapiCustomersApi implements CustomersApi {
 
     return mapOcapiCustomer(customer);
   }
+
+  async updateCustomer(email: string, firstName: string, lastName: string): Promise<ApiCustomer> {
+    const customerId = this.getCustomerId(true);
+    const customer = customerId && await this.api.patchCustomersByID(
+      customerId,
+      {
+        email,
+        login: email,
+        first_name: firstName, // eslint-disable-line camelcase
+        last_name: lastName // eslint-disable-line camelcase
+      }
+    );
+
+    return customer && mapOcapiCustomer(customer);
+  }
+
+  async updateCustomerPassword(currentPassword: string, newPassword: string): Promise<ApiCustomer> {
+    const customerId = this.getCustomerId(true);
+    const customer = customerId && await this.api.putCustomersByIDPassword(
+      customerId,
+      {
+        current_password: currentPassword, // eslint-disable-line camelcase
+        password: newPassword
+      }
+    );
+
+    return customer && mapOcapiCustomer(customer);
+  }
 }
 
 export class CapiCustomersApi implements CustomersApi {
@@ -87,9 +115,9 @@ export class CapiCustomersApi implements CustomersApi {
     this.api = new Customer.ShopperCustomers(config);
   }
 
-  protected getCustomerId() {
+  protected getCustomerId(registeredOnly?: boolean) {
     const token = getTokenFromAuthHeader(this.config.headers.authorization);
-    const customerId = token && getCustomerIdFromToken(token);
+    const customerId = token && getCustomerIdFromToken(token, registeredOnly);
 
     return customerId;
   }
@@ -134,7 +162,7 @@ export class CapiCustomersApi implements CustomersApi {
   }
 
   async getCustomer(): Promise<ApiCustomer> {
-    const customerId = this.getCustomerId();
+    const customerId = this.getCustomerId(true);
     const customer = customerId && await this.api.getCustomer({
       parameters: {
         customerId: customerId
@@ -159,5 +187,38 @@ export class CapiCustomersApi implements CustomersApi {
     });
 
     return customer;
+  }
+
+  async updateCustomer(email: string, firstName: string, lastName: string): Promise<ApiCustomer> {
+    const customerId = this.getCustomerId(true);
+
+    return customerId && await this.api.updateCustomer({
+      parameters: {
+        customerId
+      },
+      body: {
+        email,
+        login: email,
+        firstName,
+        lastName
+      }
+    });
+  }
+
+  async updateCustomerPassword(currentPassword: string, newPassword: string): Promise<ApiCustomer> {
+    const customerId = this.getCustomerId(true);
+
+    if (customerId) {
+      await this.api.updateCustomerPassword({
+        body: {
+          currentPassword,
+          password: newPassword
+        }
+      });
+
+      return this.getCustomer();
+    }
+
+    return null;
   }
 }

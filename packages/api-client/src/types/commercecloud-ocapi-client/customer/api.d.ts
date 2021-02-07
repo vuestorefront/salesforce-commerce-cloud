@@ -3,6 +3,10 @@ declare module 'commercecloud-ocapi-client' {
   export type GetCustomersOptions = {
     expand?: GetCustomersExpandOptions[];
   };
+  export type PasswordChangeRequest = {
+    current_password: string;
+    password: string;
+  };
   export type CustomerRegistration = {
     customer: Customer;
     password: string;
@@ -21,6 +25,8 @@ declare module 'commercecloud-ocapi-client' {
     constructor();
     getCustomersByID(customerId: string, opts?: GetCustomersOptions): Promise<Customer>;
     postCustomers(body: CustomerRegistration): Promise<Customer>;
+    patchCustomersByID(customerId: string, body: Customer): Promise<Customer>;
+    putCustomersByIDPassword(customerId: string, body: PasswordChangeRequest): Promise<Customer>;
     postCustomersAuthWithHttpInfo(body: PostCustomersAuthBody, opts?: PostCustomersAuthOptions): Promise<PostCustomersAuthResult>;
   }
 }
