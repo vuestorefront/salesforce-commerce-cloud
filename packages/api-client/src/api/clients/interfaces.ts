@@ -1,9 +1,12 @@
 import {
+  Cart,
+  LineItem,
   Customer,
   Category,
   Product,
   ProductSearchParams,
-  ProductSearchResponse
+  ProductSearchResponse,
+  SfccIntegrationContext
 } from '../../types';
 
 export interface CustomersApi {
@@ -14,6 +17,7 @@ export interface CustomersApi {
   createCustomer(email: string, password: string, firstName: string, lastName: string): Promise<Customer>;
   updateCustomer(email: string, firstName: string, lastName: string): Promise<Customer>;
   updateCustomerPassword(currentPassword: string, newPassword: string): Promise<Customer>;
+  getCarts(context: SfccIntegrationContext): Promise<Cart[]>;
 }
 
 export interface CategoriesApi {
@@ -26,4 +30,15 @@ export interface ProductSearchApi {
 
 export interface ProductsApi {
   getProduct(id: string, viewType?: string, locale?: string): Promise<Product>;
+  getProducts(ids: string[], viewType?: string, locale?: string): Promise<Product[]>;
+}
+
+export interface CartsApi {
+  createCart(context: SfccIntegrationContext): Promise<Cart>;
+  addItemToCart(context: SfccIntegrationContext, cartId: string, product: Product, quantitiy?: number): Promise<Cart>;
+  removeItemFromCart(context: SfccIntegrationContext, cartId: string, itemId: string): Promise<Cart>;
+  updateCartItemQuantity(context: SfccIntegrationContext, cartId: string, item: LineItem, quantity: number): Promise<Cart>;
+  addCouponToCart(context: SfccIntegrationContext, cartId: string, couponCode: string): Promise<Cart>;
+  removeCouponFromCart(context: SfccIntegrationContext, cartId: string, couponItemId: string): Promise<Cart>;
+  resetCart(context: SfccIntegrationContext, cartId: string): Promise<Cart>;
 }

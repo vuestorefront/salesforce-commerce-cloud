@@ -3,7 +3,9 @@ import { Customer, ClientConfig } from 'commerce-sdk';
 import { getObjectFromResponse } from '@commerce-apps/core';
 
 import { CustomersApi } from './interfaces';
-import { Customer as ApiCustomer } from '../../types';
+import { Cart, Customer as ApiCustomer, SfccIntegrationContext } from '../../types';
+import { mapCart } from '../mapping/shared/cartMapping';
+import { mapOcapiCart } from '../mapping/ocapi/ocapiCartMapping';
 import { mapOcapiCustomer } from '../mapping/ocapi/ocapiCustomerMapping';
 import { getCustomerIdFromToken, getTokenFromAuthHeader } from '../helpers/jwt';
 
@@ -103,6 +105,14 @@ export class OcapiCustomersApi implements CustomersApi {
     );
 
     return customer && mapOcapiCustomer(customer);
+  }
+
+  async getCarts(context: SfccIntegrationContext): Promise<Cart[]> {
+    const customerId = this.getCustomerId();
+    const cartsResponse = customerId && await this.api.getCustomersByIDBaskets(customerId);
+    const mappedCarts = cartsResponse && cartsResponse.baskets.map(mapOcapiCart.bind(null, context));
+
+    return await Promise.all(mappedCarts || []);
   }
 }
 
@@ -220,5 +230,17 @@ export class CapiCustomersApi implements CustomersApi {
     }
 
     return null;
+  }
+
+  async getCarts(context: SfccIntegrationContext): Promise<Cart[]> {
+    const customerId = this.getCustomerId();
+    const cartsResponse = customerId && await this.api.getCustomerBaskets({
+      parameters: {
+        customerId
+      }
+    });
+    const mappedCarts = cartsResponse && cartsResponse.baskets.map(mapCart.bind(null, context));
+
+    return await Promise.all(mappedCarts || []) as Cart[];
   }
 }

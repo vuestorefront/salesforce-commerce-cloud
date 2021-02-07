@@ -1,5 +1,6 @@
 import { buildConfig as buildCapiConfig } from './capiConfig';
 import { buildConfig as buildOcapiConfig } from './ocapiConfig';
+import { CapiCartsApi, OcapiCartsApi } from '../clients/carts';
 import { CapiCustomersApi, OcapiCustomersApi } from '../clients/customers';
 import { CapiCategoriesApi, OcapiCategoriesApi } from '../clients/categories';
 import { CapiProductsApi, OcapiProductsApi } from '../clients/products';
@@ -13,11 +14,13 @@ export const buildClientConfig = (settings: ApiClientSettings): ApiClients => {
   const clients: Partial<ApiClients> = {};
 
   if (settings.enableCommerceApi) {
+    clients.CartsApi = new CapiCartsApi(capiConfig);
     clients.CustomersApi = new CapiCustomersApi(capiConfig);
     clients.ProductsApi = new CapiProductsApi(capiConfig);
     clients.CategoriesApi = new CapiCategoriesApi(capiConfig);
     clients.ProductSearchApi = new CapiProductSearchApi(capiConfig);
   } else {
+    clients.CartsApi = new OcapiCartsApi(ocapiConfig);
     clients.CustomersApi = new OcapiCustomersApi(ocapiConfig);
     clients.ProductsApi = new OcapiProductsApi(ocapiConfig);
     clients.CategoriesApi = new OcapiCategoriesApi(ocapiConfig);

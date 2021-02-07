@@ -1,5 +1,9 @@
 declare module 'commercecloud-ocapi-client' {
   export type GetCustomersExpandOptions = 'addresses' | 'paymentinstruments';
+  export type BasketsResult = {
+    baskets: Basket[];
+    total: number;
+  };
   export type GetCustomersOptions = {
     expand?: GetCustomersExpandOptions[];
   };
@@ -23,6 +27,7 @@ declare module 'commercecloud-ocapi-client' {
   };
   export class CustomersApi {
     constructor();
+    getCustomersByIDBaskets(customerId: string): Promise<BasketsResult>;
     getCustomersByID(customerId: string, opts?: GetCustomersOptions): Promise<Customer>;
     postCustomers(body: CustomerRegistration): Promise<Customer>;
     patchCustomersByID(customerId: string, body: Customer): Promise<Customer>;

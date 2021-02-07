@@ -24,8 +24,15 @@ declare module 'commercecloud-ocapi-client' {
     locale?: string;
     allImages?: boolean;
   };
+
+  export type ProductsResponse = {
+    count: number;
+    data: Product[];
+  }
+
   export class ProductsApi {
     constructor();
     getProductsByID(id: string, opts?: GetProductOptions): Promise<Product>;
+    getProductsByIDs(ids: string[], opts?: GetProductOptions): Promise<ProductsResponse>;
   }
 }

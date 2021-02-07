@@ -5,6 +5,7 @@ import { CookieOptions } from 'express';
 import { ApiInstance, IntegrationContext } from '@vue-storefront/core';
 import * as Apis from './api/clients/interfaces';
 import {
+  Checkout as SdkCheckout,
   Search as SdkSearch,
   Product as SdkProduct,
   Customer as SdkCustomer
@@ -20,7 +21,11 @@ export type Customer = SdkCustomer.ShopperCustomers.Customer & {
   previousVisitTime?: Date;
 };
 
-export type Cart = Record<string, unknown>;
+export type Cart = SdkCheckout.ShopperBaskets.Basket & {
+  lineItems?: LineItem[];
+};
+export type CartItem = SdkCheckout.ShopperBaskets.ProductItem;
+export type CouponItem = SdkCheckout.ShopperBaskets.CouponItem;
 export type Wishlist = Record<string, unknown>;
 export type VariationAttributeValue = SdkProduct.ShopperProducts.VariationAttributeValue & {
   selected: boolean;
@@ -83,13 +88,17 @@ export type ProductSearchResponse = {
 }
 export type CategoryFilter = Record<string, unknown>;
 export type ShippingMethod = Record<string, unknown>;
-export type LineItem = Record<string, unknown>;
+export type LineItem = Product & {
+  itemId: string;
+  quantity: number;
+};
 
 export type ApiClients = {
   CustomersApi: Apis.CustomersApi,
   CategoriesApi: Apis.CategoriesApi,
   ProductsApi: Apis.ProductsApi,
-  ProductSearchApi: Apis.ProductSearchApi
+  ProductSearchApi: Apis.ProductSearchApi,
+  CartsApi: Apis.CartsApi
 }
 
 export type SfccSetupConfig = IntegrationContext<ApiClients, ApiClientSettings>;
@@ -107,6 +116,14 @@ export type Endpoints = {
   getCategory(context: SfccIntegrationContext, id: string, levels?: number): Promise<Category>;
   searchProducts(context: SfccIntegrationContext, params: ProductSearchParams): Promise<ProductSearchResponse>;
   getProduct(context: SfccIntegrationContext, id: string): Promise<Product>;
+  getProducts(context: SfccIntegrationContext, ids: string[]): Promise<Product[]>;
+  getCart(context: SfccIntegrationContext,): Promise<Cart>;
+  resetCart(context: SfccIntegrationContext, cartId: string): Promise<Cart>;
+  addToCart(context: SfccIntegrationContext, cartId: string, product: Product, quantity: number): Promise<Cart>;
+  removeFromCart(context: SfccIntegrationContext, cartId: string, item: LineItem): Promise<Cart>;
+  addCouponToCart(context: SfccIntegrationContext, cartId: string, couponCode: string): Promise<Cart>;
+  removeCouponFromCart(context: SfccIntegrationContext, cartId: string, couponItemId: string): Promise<Cart>;
+  updateCartItem(context: SfccIntegrationContext, cartId: string, item: LineItem, quantity: number): Promise<Cart>;
 };
 
 export type ContextualizedEndpoints = {

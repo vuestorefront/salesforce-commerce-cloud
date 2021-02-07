@@ -15,8 +15,8 @@ export class OcapiProductsApi implements ProductsApi {
     this.api = new ShopApi.ProductsApi();
   }
 
-  async getProduct(id: string, viewType?: string, locale?: string): Promise<Product> {
-    const productResponse = await this.api.getProductsByID(id, {
+  protected buildGetProductOptions(locale?: string): ShopApi.GetProductOptions {
+    return {
       locale,
       allImages: true,
       expand: [
@@ -30,9 +30,21 @@ export class OcapiProductsApi implements ProductsApi {
         'variations',
         'set_products'
       ]
-    });
+    };
+  }
+
+  async getProduct(id: string, viewType?: string, locale?: string): Promise<Product> {
+    const productResponse = await this.api.getProductsByID(id, this.buildGetProductOptions(locale));
 
     return mapOcapiProduct(productResponse, viewType);
+  }
+
+  async getProducts(ids: string[], viewType?: string, locale?: string): Promise<Product[]> {
+    const productResponse = await this.api.getProductsByIDs(ids, this.buildGetProductOptions(locale));
+
+    return productResponse.data.map(
+      (product) => mapOcapiProduct(product, viewType)
+    );
   }
 }
 
@@ -55,5 +67,19 @@ export class CapiProductsApi implements ProductsApi {
     });
 
     return mapProduct(productResponse, viewType);
+  }
+
+  async getProducts(ids: string[], viewType?: string, locale?: string): Promise<Product[]> {
+    const productResponse = await this.api.getProducts({
+      parameters: {
+        locale,
+        ids: ids.join(','),
+        allImages: true
+      }
+    });
+
+    return productResponse.data.map(
+      (product) => mapProduct(product, viewType)
+    );
   }
 }
