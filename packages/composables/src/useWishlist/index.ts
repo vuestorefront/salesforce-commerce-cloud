@@ -1,44 +1,32 @@
 /* istanbul ignore file */
 import {
-  Context,
   useWishlistFactory,
   UseWishlistFactoryParams
 } from '@vue-storefront/core';
 import { ref, Ref } from '@vue/composition-api';
-import { Wishlist, WishlistProduct, Product } from '../types';
+import { Context, Wishlist, WishlistItem, Product } from '@vue-storefront/sfcc-api';
 
 export const wishlist: Ref<Wishlist> = ref(null);
 
-const params: UseWishlistFactoryParams<Wishlist, WishlistProduct, Product> = {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  load: async (context: Context) => {
-    console.log('Mocked: loadWishlist');
-    return {};
-  },
+const params: UseWishlistFactoryParams<Wishlist, WishlistItem, Product> = {
+  load: async (context: Context) => context.$sfcc.api.getWishlist(),
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  addItem: async (context: Context, { currentWishlist, product }) => {
-    console.log('Mocked: addToWishlist');
-    return {};
-  },
+  addItem: async (context: Context, { currentWishlist, product }) => context.$sfcc.api.addToWishlist(currentWishlist.id, product._id),
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  removeItem: async (context: Context, { currentWishlist, product }) => {
-    console.log('Mocked: removeFromWishlist');
-    return {};
-  },
+  removeItem: async (context: Context, { currentWishlist, product }) => context.$sfcc.api.removeFromWishlist(currentWishlist.id, product.id),
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   clear: async (context: Context, { currentWishlist }) => {
-    console.log('Mocked: clearWishlist');
-    return {};
+    const removals = currentWishlist.items.map((item) => context.$sfcc.api.removeFromWishlist(currentWishlist.id, item.id));
+
+    await Promise.all(removals);
+
+    return {
+      ...currentWishlist,
+      items: []
+    };
   },
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  isInWishlist: (context: Context, { currentWishlist }) => {
-    console.log('Mocked: isInWishlist');
-    return false;
-  }
+  isInWishlist: (_: Context, { currentWishlist, product }) => currentWishlist.items.some((item) => item.productId === product._id)
 };
 
-export default useWishlistFactory<Wishlist, WishlistProduct, Product>(params);
+export default useWishlistFactory<Wishlist, WishlistItem, Product>(params);

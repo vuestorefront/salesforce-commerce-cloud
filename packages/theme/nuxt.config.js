@@ -120,6 +120,30 @@ export default {
           ]
         })
       });
+
+      config.module.rules.push({
+        test: /Category\.vue$/,
+        loader: StringReplacePlugin.replace({
+          replacements: [
+            {
+              pattern: /addItemToWishlist,/,
+              replacement: () => 'addItemToWishlist, removeItemFromWishlist, isInWishlist,'
+            },
+            {
+              pattern: /{ addItem: addItemToWishlist }/,
+              replacement: () => '{ addItem: addItemToWishlist, removeItem: removeItemFromWishlist, isInWishlist }'
+            },
+            {
+              pattern: /:isInWishlist="false"/,
+              replacement: () => ':isInWishlist="isInWishlist({ product })"'
+            },
+            {
+              pattern: /@click:wishlist="addItemToWishlist\({ product }\)"/,
+              replacement: () => '@click:wishlist="isInWishlist({ product }) ? removeItemFromWishlist({ product }) : addItemToWishlist({ product })"'
+            }
+          ]
+        })
+      });
     },
     babel: {
       plugins: [

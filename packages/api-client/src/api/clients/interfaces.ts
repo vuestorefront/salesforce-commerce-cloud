@@ -7,6 +7,7 @@ import {
   Product,
   ProductSearchParams,
   ProductSearchResponse,
+  Wishlist,
   ContactInfo,
   OrderAddress,
   SfccIntegrationContext
@@ -36,6 +37,13 @@ export interface ProductSearchApi {
 export interface ProductsApi {
   getProduct(id: string, viewType?: string, locale?: string): Promise<Product>;
   getProducts(ids: string[], viewType?: string, locale?: string): Promise<Product[]>;
+}
+
+export interface WishlistsApi {
+  getWishlist(): Promise<Wishlist>;
+  createWishlist(): Promise<Wishlist>;
+  addToWishlist(listId: string, productId: string): Promise<Wishlist>;
+  removeFromWishlist(listId: string, itemId: string): Promise<Wishlist>;
 }
 
 export interface CartsApi {

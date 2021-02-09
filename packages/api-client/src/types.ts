@@ -36,7 +36,12 @@ export type Cart = SdkCheckout.ShopperBaskets.Basket & {
 };
 export type CartItem = SdkCheckout.ShopperBaskets.ProductItem;
 export type CouponItem = SdkCheckout.ShopperBaskets.CouponItem;
-export type Wishlist = Record<string, unknown>;
+export type WishlistItem = SdkCustomer.ShopperCustomers.CustomerProductListItem & {
+  fullProduct?: Product;
+};
+export type Wishlist = SdkCustomer.ShopperCustomers.CustomerProductList & {
+  items: WishlistItem[];
+};
 export type VariationAttributeValue = SdkProduct.ShopperProducts.VariationAttributeValue & {
   selected: boolean;
 };
@@ -111,6 +116,7 @@ export type ApiClients = {
   CategoriesApi: Apis.CategoriesApi,
   ProductsApi: Apis.ProductsApi,
   ProductSearchApi: Apis.ProductSearchApi,
+  WishlistsApi: Apis.WishlistsApi,
   CartsApi: Apis.CartsApi,
   OrdersApi: Apis.OrdersApi
 }
@@ -131,6 +137,9 @@ export type Endpoints = {
   searchProducts(context: SfccIntegrationContext, params: ProductSearchParams): Promise<ProductSearchResponse>;
   getProduct(context: SfccIntegrationContext, id: string): Promise<Product>;
   getProducts(context: SfccIntegrationContext, ids: string[]): Promise<Product[]>;
+  getWishlist(context: SfccIntegrationContext): Promise<Wishlist>;
+  addToWishlist(context: SfccIntegrationContext, listId: string, productId: string): Promise<Wishlist>;
+  removeFromWishlist(context: SfccIntegrationContext, listId: string, itemId: string): Promise<Wishlist>;
   getCart(context: SfccIntegrationContext,): Promise<Cart>;
   resetCart(context: SfccIntegrationContext, cartId: string): Promise<Cart>;
   addToCart(context: SfccIntegrationContext, cartId: string, product: Product, quantity: number): Promise<Cart>;

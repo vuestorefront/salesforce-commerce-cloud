@@ -33,6 +33,59 @@ declare module 'commercecloud-ocapi-client' {
     last_modified: Date;
   }
 
+  export type CustomerProductListRegistrant = import('../common/productLists').ProductListRegistrant & {
+    email: string;
+  };
+
+  export type CustomerAddressLink = {
+    address_id: string;
+    link: string;
+    title: string;
+  };
+
+  export type CustomerProductListItem = import('../common/productLists').PublicProductListItem & {
+    product_id: string;
+    public: boolean;
+    purchased_quantity: number;
+    quantity: number;
+  };
+
+  export type ProductListEvent = {
+    city: string;
+    country: string;
+    date: Date;
+    state: string;
+    type: string;
+  };
+
+  export type CustomerProductListItemLink = ProductSimpleLink;
+
+  export type ProductListShippingAddress = {
+    address_id: string;
+    city: string;
+    first_name: string;
+    last_name: string;
+  };
+
+  export type CustomerProductList = {
+    co_registrant: CustomerProductListRegistrant;
+    creation_date: Date;
+    current_shipping_address_link: CustomerAddressLink;
+    customer_product_list_items: CustomerProductListItem[];
+    description: string;
+    event: ProductListEvent;
+    id: string;
+    items_link: CustomerProductListItemLink;
+    last_modified: Date;
+    name: string;
+    post_event_shipping_address_link: CustomerAddressLink;
+    product_list_shipping_address: ProductListShippingAddress;
+    public: boolean;
+    registrant: CustomerProductListRegistrant;
+    shipping_address_link: CustomerAddressLink;
+    type: string;
+  };
+
   export type Customer = {
     addresses?: CustomerAddress[];
     auth_type?: Customer.AuthTypeEnum;

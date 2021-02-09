@@ -80,7 +80,7 @@ export type Shipping = Record<string, unknown>;
 
 export type ShippingMethod = Record<string, unknown>;
 
-export type WishlistProduct = Record<string, unknown>;
+export type WishlistItem = Record<string, unknown>;
 
 export type Wishlist = Record<string, unknown>;
 

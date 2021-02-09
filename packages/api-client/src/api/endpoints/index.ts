@@ -5,6 +5,9 @@ import refreshToken from './refreshToken';
 import signIn from './signIn';
 import getCustomer from './getCustomer';
 import { getProduct, getProducts } from './getProduct';
+import getWishlist from './getWishlist';
+import addToWishlist from './addToWishlist';
+import removeFromWishlist from './removeFromWishlist';
 import getCategory from './getCategory';
 import createCustomer from './createCustomer';
 import updateCustomer from './updateCustomer';
@@ -38,6 +41,9 @@ const endpoints = {
   searchProducts,
   getProduct,
   getProducts,
+  getWishlist,
+  addToWishlist,
+  removeFromWishlist,
   getCategory,
   getCart,
   resetCart,

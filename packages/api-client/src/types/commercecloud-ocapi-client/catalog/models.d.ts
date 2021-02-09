@@ -70,6 +70,10 @@ declare module 'commercecloud-ocapi-client' {
     target_product_id: string;
     target_product_link: string;
   };
+  export type ProductSimpleLink = {
+    link: string;
+    title: string;
+  };
   export type ProductPromotion = {
     link: string;
     callout_msg: string;

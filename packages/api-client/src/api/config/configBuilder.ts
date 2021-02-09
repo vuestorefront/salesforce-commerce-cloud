@@ -5,6 +5,7 @@ import { CapiOrdersApi, OcapiOrdersApi } from '../clients/orders';
 import { CapiCustomersApi, OcapiCustomersApi } from '../clients/customers';
 import { CapiCategoriesApi, OcapiCategoriesApi } from '../clients/categories';
 import { CapiProductsApi, OcapiProductsApi } from '../clients/products';
+import { CapiWishlistsApi, OcapiWishlistsApi } from '../clients/wishlists';
 import { CapiProductSearchApi, OcapiProductSearchApi } from '../clients/productSearch';
 import { ApiClients, ApiClientSettings } from '../../types';
 
@@ -19,6 +20,7 @@ export const buildClientConfig = (settings: ApiClientSettings): ApiClients => {
     clients.OrdersApi = new CapiOrdersApi(capiConfig);
     clients.CustomersApi = new CapiCustomersApi(capiConfig);
     clients.ProductsApi = new CapiProductsApi(capiConfig);
+    clients.WishlistsApi = new CapiWishlistsApi(capiConfig);
     clients.CategoriesApi = new CapiCategoriesApi(capiConfig);
     clients.ProductSearchApi = new CapiProductSearchApi(capiConfig);
   } else {
@@ -26,6 +28,7 @@ export const buildClientConfig = (settings: ApiClientSettings): ApiClients => {
     clients.OrdersApi = new OcapiOrdersApi(ocapiConfig);
     clients.CustomersApi = new OcapiCustomersApi(ocapiConfig);
     clients.ProductsApi = new OcapiProductsApi(ocapiConfig);
+    clients.WishlistsApi = new OcapiWishlistsApi(ocapiConfig);
     clients.CategoriesApi = new OcapiCategoriesApi(ocapiConfig);
     clients.ProductSearchApi = new OcapiProductSearchApi(ocapiConfig);
   }
