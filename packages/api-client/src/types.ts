@@ -110,6 +110,14 @@ export type LineItem = Product & {
   quantity: number;
 };
 export type Order = SdkCheckout.ShopperOrders.Order;
+export type OrderSearchParams = {
+  crossSites?: boolean;
+  from?: string;
+  until?: string;
+  status?: string;
+  offset?: number;
+  limit?: number;
+};
 
 export type ApiClients = {
   CustomersApi: Apis.CustomersApi,
@@ -155,6 +163,7 @@ export type Endpoints = {
   savePaymentInstrument(context: SfccIntegrationContext, cartId: string, paymentMethodId: string, amount: number, body: any): Promise<Cart>;
   updateCart(context: SfccIntegrationContext, cartId: string, contactInfo: ContactInfo, shippingAddress: OrderAddress, shippingMethodId: string, billingAddress: OrderAddress, paymentMethodId: string): Promise<Cart>;
   createOrder(context: SfccIntegrationContext, cartId: string): Promise<Order>;
+  getCustomerOrders(context: SfccIntegrationContext, params: OrderSearchParams): Promise<Order[]>;
 };
 
 export type ContextualizedEndpoints = {

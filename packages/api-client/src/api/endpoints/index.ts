@@ -25,6 +25,7 @@ import saveBillingAddress from './saveBillingAddress';
 import saveShippingMethod from './saveShippingMethod';
 import savePaymentInstrument from './savePaymentInstrument';
 import createOrder from './createOrder';
+import getCustomerOrders from './getCustomerOrders';
 import getApplicablePaymentMethods from './getApplicablePaymentMethods';
 import getApplicableShippingMethods from './getApplicableShippingMethods';
 
@@ -57,6 +58,7 @@ const endpoints = {
   saveShippingMethod,
   savePaymentInstrument,
   createOrder,
+  getCustomerOrders,
   getApplicablePaymentMethods,
   getApplicableShippingMethods,
 }

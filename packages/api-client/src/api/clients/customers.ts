@@ -3,15 +3,18 @@ import { Customer, ClientConfig } from 'commerce-sdk';
 import { getObjectFromResponse } from '@commerce-apps/core';
 
 import { CustomersApi } from './interfaces';
-import { Cart, Customer as ApiCustomer, SfccIntegrationContext } from '../../types';
+import { Cart, Customer as ApiCustomer, Order, OrderSearchParams, SfccIntegrationContext } from '../../types';
 import { mapCart } from '../mapping/shared/cartMapping';
+import { mapOrder } from '../mapping/shared/orderMapping';
 import { mapOcapiCart } from '../mapping/ocapi/ocapiCartMapping';
+import { mapOcapiOrder } from '../mapping/ocapi/ocapiOrderMapping';
 import { mapOcapiCustomer } from '../mapping/ocapi/ocapiCustomerMapping';
 import { getCustomerIdFromToken, getTokenFromAuthHeader } from '../helpers/jwt';
 
 export class OcapiCustomersApi implements CustomersApi {
   protected config: ShopApi.ApiConfig;
   protected api: ShopApi.CustomersApi;
+  protected customerId: string;
 
   constructor(config: ShopApi.ApiConfig) {
     this.config = config;
@@ -114,11 +117,27 @@ export class OcapiCustomersApi implements CustomersApi {
 
     return await Promise.all(mappedCarts || []);
   }
+
+  async getOrders(context: SfccIntegrationContext, params: OrderSearchParams): Promise<Order[]> {
+    const customerId = this.getCustomerId(true);
+    const ordersResponse = customerId && await this.api.getCustomersByIDOrders(customerId, {
+      ...params,
+      start: params.offset,
+      count: params.limit
+    });
+
+    if (ordersResponse) {
+      return await Promise.all(ordersResponse.data.map(mapOcapiOrder.bind(null, context)));
+    }
+
+    return [];
+  }
 }
 
 export class CapiCustomersApi implements CustomersApi {
   protected config: ClientConfig;
   protected api: Customer.ShopperCustomers;
+  protected customerId: string;
 
   constructor(config: ClientConfig) {
     this.config = config;
@@ -242,5 +261,21 @@ export class CapiCustomersApi implements CustomersApi {
     const mappedCarts = cartsResponse && cartsResponse.baskets.map(mapCart.bind(null, context));
 
     return await Promise.all(mappedCarts || []) as Cart[];
+  }
+
+  async getOrders(context: SfccIntegrationContext, params: OrderSearchParams): Promise<Order[]> {
+    const customerId = this.getCustomerId(true);
+    const ordersResponse = customerId && await this.api.getCustomerOrders({
+      parameters: {
+        ...params,
+        customerId
+      }
+    });
+
+    if (ordersResponse) {
+      return ordersResponse.data.map(mapOrder.bind(null, context));
+    }
+
+    return [];
   }
 }

@@ -1,39 +1,51 @@
 /* istanbul ignore file */
 
-import { UserOrderGetters } from '@vue-storefront/core';
-import { Order, OrderItem } from '../types';
+import { UserOrderGetters, AgnosticOrderStatus } from '@vue-storefront/core';
+import { Order, CartItem } from '@vue-storefront/sfcc-api';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getDate = (order: any): string => order?.date || '123';
+export const getDate = (order: Order): string => (order && order.creationDate) || '';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getId = (order: any): string => order?.id || Math.floor(Math.random() * 100);
+export const getId = (order: Order): string => (order && order.orderNo) || '';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getStatus = (order: any): string => order?.status || 'Failed';
+export const getStatus = (order: Order): AgnosticOrderStatus => {
+  switch (order.status) {
+    case 'failed':
+    case 'cancelled':
+      return AgnosticOrderStatus.Cancelled;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getPrice = (order: any): number | null => order?.price || 0;
+    case 'created':
+      return AgnosticOrderStatus.Open;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getItems = (order: any): any[] => order?.items || [];
+    case 'new':
+    case 'open':
+      if (order.shippingStatus === 'shipped') {
+        return AgnosticOrderStatus.Shipped;
+      }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getItemSku = (item: any): string => item?.sku || 0;
+      return AgnosticOrderStatus.Confirmed;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getItemName = (item: any): string => item?.name || 0;
+    case 'completed':
+      return AgnosticOrderStatus.Complete;
+  }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getItemQty = (item: any): number => item?.qty || 0;
+  return AgnosticOrderStatus.Pending;
+};
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getItemPrice = (item: any): number => item?.price?.current || 0;
+export const getPrice = (order: Order): number | null => order && order.orderTotal;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getFormattedPrice = (price: number) => String(price);
+export const getItems = (order: Order): CartItem[] => (order && order.productItems) || [];
 
-const orderGetters: UserOrderGetters<Order, OrderItem> = {
+export const getItemSku = (item: CartItem): string => (item && item.productId) || '';
+
+export const getItemName = (item: CartItem): string => (item && item.productName) || '';
+
+export const getItemQty = (item: CartItem): number => (item && item.quantity) || 0;
+
+export const getItemPrice = (item: CartItem): number => (item && item.price) || 0;
+
+export const getFormattedPrice = (price: number) => price && String(price);
+
+const orderGetters: UserOrderGetters<Order, CartItem> = {
   getDate,
   getId,
   getStatus,

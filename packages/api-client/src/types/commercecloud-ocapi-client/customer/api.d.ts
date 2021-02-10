@@ -43,11 +43,29 @@ declare module 'commercecloud-ocapi-client' {
     data: Customer;
     response: import('superagent').Response;
   };
+  export type GetCustomerOrdersOpts = {
+    start?: number;
+    count?: number;
+    crossSites?: boolean;
+    from?: string;
+    until?: string;
+    status?: string;
+  };
+  export type CustomerOrderResult = {
+    count: number;
+    data: Order[];
+    next: string;
+    previous: string;
+    select: string;
+    start: number;
+    total: number;
+  };
   export class CustomersApi {
     constructor();
     getCustomersByIDBaskets(customerId: string): Promise<BasketsResult>;
     getCustomersByID(customerId: string, opts?: GetCustomersOptions): Promise<Customer>;
     postCustomers(body: CustomerRegistration): Promise<Customer>;
+    getCustomersByIDOrders(customerId: string, body?: GetCustomerOrdersOpts): Promise<CustomerOrderResult>;
     patchCustomersByID(customerId: string, body: Customer): Promise<Customer>;
     putCustomersByIDPassword(customerId: string, body: PasswordChangeRequest): Promise<Customer>;
     postCustomersAuthWithHttpInfo(body: PostCustomersAuthBody, opts?: PostCustomersAuthOptions): Promise<PostCustomersAuthResult>;
