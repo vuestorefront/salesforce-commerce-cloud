@@ -1,30 +1,30 @@
 ![Vue Storefront](https://camo.githubusercontent.com/48c886ac0703e3a46bc0ec963e20f126337229fc/68747470733a2f2f643968687267346d6e767a6f772e636c6f756466726f6e742e6e65742f7777772e76756573746f726566726f6e742e696f2f32383062313964302d6c6f676f2d76735f3062793032633062793032633030303030302e6a7067)
 
-# Boilerplate for Vue Storefront Next
+# Vue Storefront Next Salesforce Commerce Cloud B2C Integration
 
 <a href="https://slack.vuestorefront.io">![Branch Develop](https://img.shields.io/badge/community%20chat-slack-FF1493.svg)</a>
 
 > **Disclaimer:** This project is still in beta phase.
 
-This repository is a starting point for creating new integrations for [Vue Storefront Next](https://github.com/DivanteLtd/vue-storefront/tree/next).
+This repository is a starting point for creating new integrations for [Vue Storefront Next with SFCC](https://github.com/DivanteLtd/vue-storefront/tree/next).
 
-* [Documentation](https://docs-next.vuestorefront.io/integrate/ecommerce.html#scope) (WIP)
-
+- [Demo](https://shopify-pwa-beta.aureatelabs.com/) (WIP)
+- [Documentation](https://docs-next.vuestorefront.io/shopify/) (WIP)
+- [Getting Started](docs/sfcc/getting-started.md) (WIP)
 
 This repository is a monorepo containing three projects:
 
-* **api-client** - communicates with a backend;
-* **composables** - exposes composable functions used to retrieve data using `api-client` and to map them to universal data formats using `getters`;
-* **theme** - `nuxt` project that glues everything together. It extends our core theme and uses `composables` to retrieve data.
+- **api-client** - communicates with an SFCC instance;
+- **composables** - exposes composable functions used to retrieve data using `api-client` and to map them to universal data formats using `getters`;
+- **theme** - `nuxt` project that glues everything together. It extends our core theme and uses `composables` to retrieve data.
 
 ## How to start?
-
-1. Change all `@vue-storefront/boilerplate` strings to your integration name (eg `@vue-storefront/super-ecomm`)
+1. Configure packages/theme/nuxt.config.js and packages/theme/middleware.config.js to establish the connection to your SFCC Instance.
 
 2. Install all required dependencies:
 
 ```sh
-yarn install
+yarn install or yarn
 ```
 
 3. (optional) Then you can verify if everything works properly by building all three projects:
@@ -33,7 +33,7 @@ yarn install
 yarn build
 ```
 
-4. If everything built properly, you can start creating your new integration with:
+4. If everything built properly, you can start customizing your storefront:
 
 ```sh
 yarn dev

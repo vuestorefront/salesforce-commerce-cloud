@@ -6,6 +6,8 @@
     "node": ">=10.x"
   },
   "scripts": {
+    "docs:build": "cd docs && yarn build",
+    "docs:dev": "cd docs && yarn dev",
     "build": "yarn build:api-client && yarn build:composables && yarn build:theme",
     "build:api-client": "cd packages/api-client && yarn build",
     "build:composables": "cd packages/composables && yarn build",
@@ -52,6 +54,7 @@
     "vue-eslint-parser": "^7.0.0"
   },
   "workspaces": [
+    "docs/",
     "packages/*"
   ],
   "husky": {
