@@ -8,6 +8,10 @@ declare module 'commercecloud-ocapi-client' {
   export type GetCustomersOptions = {
     expand?: GetCustomersExpandOptions[];
   };
+  export type GetCustomerAddressesOptions = {
+    start?: number;
+    count?: number;
+  };
   export type GetCustomerProductListsOptions = {
     start: number;
     count: number;
@@ -64,6 +68,11 @@ declare module 'commercecloud-ocapi-client' {
     constructor();
     getCustomersByIDBaskets(customerId: string): Promise<BasketsResult>;
     getCustomersByID(customerId: string, opts?: GetCustomersOptions): Promise<Customer>;
+    getCustomersByIDAddresses(customerId: string, opts?: GetCustomerAddressesOptions): Promise<CustomerAddressResult>;
+    getCustomersByIDAddressesByID(customerId: string, addressName: string): Promise<CustomerAddress>;
+    postCustomersByIDAddresses(customerId: string, body: CustomerAddress): Promise<CustomerAddress>;
+    patchCustomersByIDAddressesByID(customerId: string, addressName: string, body: CustomerAddress): Promise<CustomerAddress>;
+    deleteCustomersByIDAddressesByID(customerId: string, addressName: string): Promise<void>;
     postCustomers(body: CustomerRegistration): Promise<Customer>;
     getCustomersByIDOrders(customerId: string, body?: GetCustomerOrdersOpts): Promise<CustomerOrderResult>;
     patchCustomersByID(customerId: string, body: Customer): Promise<Customer>;

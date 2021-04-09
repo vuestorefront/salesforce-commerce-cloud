@@ -3,13 +3,17 @@ import { Customer, ClientConfig } from 'commerce-sdk';
 import { getObjectFromResponse } from '@commerce-apps/core';
 
 import { CustomersApi } from './interfaces';
-import { Cart, Customer as ApiCustomer, Order, OrderSearchParams, SfccIntegrationContext } from '../../types';
+import { Cart, Customer as ApiCustomer, CustomerAddress, Order, OrderSearchParams, SfccIntegrationContext } from '../../types';
 import { mapCart } from '../mapping/shared/cartMapping';
 import { mapOrder } from '../mapping/shared/orderMapping';
 import { mapOcapiCart } from '../mapping/ocapi/ocapiCartMapping';
 import { mapOcapiOrder } from '../mapping/ocapi/ocapiOrderMapping';
-import { mapOcapiCustomer } from '../mapping/ocapi/ocapiCustomerMapping';
 import { getCustomerIdFromToken, getTokenFromAuthHeader } from '../helpers/jwt';
+import {
+  mapOcapiCustomer,
+  mapOcapiCustomerAddress,
+  mapToOcapiCustomerAddress
+} from '../mapping/ocapi/ocapiCustomerMapping';
 
 export class OcapiCustomersApi implements CustomersApi {
   protected config: ShopApi.ApiConfig;
@@ -65,6 +69,60 @@ export class OcapiCustomersApi implements CustomersApi {
     });
 
     return customer && mapOcapiCustomer(customer);
+  }
+
+  async getAddresses(): Promise<CustomerAddress[]> {
+    const customerId = this.getCustomerId(true);
+    const listResponse = customerId && await this.api.getCustomersByIDAddresses(customerId, {
+      start: 0,
+      count: 200
+    });
+
+    if (listResponse && listResponse.data) {
+      return listResponse.data.map(mapOcapiCustomerAddress);
+    }
+
+    return [];
+  }
+
+  async createAddress(address: CustomerAddress): Promise<CustomerAddress> {
+    const customerId = this.getCustomerId(true);
+    const addressResponse = customerId && await this.api.postCustomersByIDAddresses(
+      customerId,
+      mapToOcapiCustomerAddress(address)
+    );
+
+    if (addressResponse) {
+      return mapOcapiCustomerAddress(addressResponse);
+    }
+
+    return null;
+  }
+
+  async updateAddress(address: CustomerAddress): Promise<CustomerAddress> {
+    const customerId = this.getCustomerId(true);
+    const addressResponse = customerId && await this.api.patchCustomersByIDAddressesByID(
+      customerId,
+      address.addressId,
+      mapToOcapiCustomerAddress(address)
+    );
+
+    if (addressResponse) {
+      return mapOcapiCustomerAddress(addressResponse);
+    }
+
+    return null;
+  }
+
+  async deleteAddress(address: CustomerAddress): Promise<void> {
+    const customerId = this.getCustomerId(true);
+
+    if (customerId) {
+      await this.api.deleteCustomersByIDAddressesByID(
+        customerId,
+        address.addressId
+      );
+    }
   }
 
   async createCustomer(email: string, password: string, firstName: string, lastName: string): Promise<ApiCustomer> {
@@ -199,6 +257,52 @@ export class CapiCustomersApi implements CustomersApi {
     });
 
     return customer;
+  }
+
+  async getAddresses(): Promise<CustomerAddress[]> {
+    const customer = await this.getCustomer();
+
+    if (customer) {
+      return customer.addresses;
+    }
+
+    return [];
+  }
+
+  async createAddress(address: CustomerAddress): Promise<CustomerAddress> {
+    const customerId = this.getCustomerId(true);
+
+    return customerId && await this.api.createCustomerAddress({
+      parameters: {
+        customerId
+      },
+      body: address
+    });
+  }
+
+  async updateAddress(address: CustomerAddress): Promise<CustomerAddress> {
+    const customerId = this.getCustomerId(true);
+
+    return customerId && await this.api.updateCustomerAddress({
+      parameters: {
+        customerId,
+        addressName: address.addressId
+      },
+      body: address
+    });
+  }
+
+  async deleteAddress(address: CustomerAddress): Promise<void> {
+    const customerId = this.getCustomerId(true);
+
+    if (customerId) {
+      await this.api.removeCustomerAddress({
+        parameters: {
+          customerId,
+          addressName: address.addressId
+        }
+      });
+    }
   }
 
   async createCustomer(email: string, password: string, firstName: string, lastName: string): Promise<ApiCustomer> {

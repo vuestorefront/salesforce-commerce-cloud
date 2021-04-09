@@ -15,7 +15,6 @@ export { default as useReview } from './useReview';
 export { default as useShipping } from './useShipping';
 export { default as useShippingProvider } from './useShippingProvider';
 export { default as useUser } from './useUser';
-export { default as useUserBilling } from './useUserBilling';
 export { default as useUserOrder } from './useUserOrder';
 export { default as useUserShipping } from './useUserShipping';
 export { default as useWishlist } from './useWishlist';

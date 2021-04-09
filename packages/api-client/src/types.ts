@@ -27,6 +27,7 @@ export type ContactInfo = {
   lastName: string;
   email: string;
 };
+export type CustomerAddress = SdkCustomer.ShopperCustomers.CustomerAddress;
 export type OrderAddress = SdkCheckout.ShopperOrders.OrderAddress;
 export type ShippingMethodResult = SdkCheckout.ShopperBaskets.ShippingMethodResult;
 export type PaymentMethodResult = SdkCheckout.ShopperBaskets.PaymentMethodResult;
@@ -138,6 +139,10 @@ export type Endpoints = {
   refreshToken(context: SfccIntegrationContext): Promise<void>;
   signIn(context: SfccIntegrationContext, username: string, password: string): Promise<Customer>;
   getCustomer(context: SfccIntegrationContext): Promise<Customer>;
+  getCustomerAddresses(context: SfccIntegrationContext): Promise<CustomerAddress[]>;
+  createCustomerAddress(context: SfccIntegrationContext, address: CustomerAddress): Promise<CustomerAddress>;
+  updateCustomerAddress(context: SfccIntegrationContext, address: CustomerAddress): Promise<CustomerAddress>;
+  deleteCustomerAddress(context: SfccIntegrationContext, address: CustomerAddress): Promise<void>;
   createCustomer(context: SfccIntegrationContext, email: string, password: string, firstName: string, lastName: string): Promise<Customer>;
   updateCustomer(context: SfccIntegrationContext, email: string, firstName: string, lastName: string): Promise<Customer>;
   updateCustomerPassword(context: SfccIntegrationContext, currentPassword: string, newPassword: string): Promise<Customer>;

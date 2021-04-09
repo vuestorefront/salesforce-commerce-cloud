@@ -106,6 +106,50 @@ export default {
     // TODO Handle these in theme files
     extend(config) {
       config.module.rules.push({
+        test: /MyAccount\.vue$/,
+        loader: StringReplacePlugin.replace({
+          replacements: [
+            {
+              pattern: /my-account-page_shipping-details/,
+              replacement: () => 'my-account-page_address-details'
+            },
+            {
+              pattern: /"Shipping details"/,
+              replacement: () => '"Address details"'
+            },
+            {
+              pattern: /<SfContentPage data-cy="my-account-page_billing-details" title="Billing details">\s+<BillingDetails \/>\s+<\/SfContentPage>/m,
+              replacement: () => ''
+            },
+            {
+              pattern: /import BillingDetails from '\.\/MyAccount\/BillingDetails';/,
+              replacement: () => ''
+            },
+            {
+              pattern: /BillingDetails,?/g,
+              replacement: () => ''
+            }
+          ]
+        })
+      });
+
+      config.module.rules.push({
+        test: /ShippingDetails\.vue$/,
+        loader: StringReplacePlugin.replace({
+          replacements: [
+            {
+              pattern: /UserShippingAddress/g,
+              replacement: () => 'UserAddress'
+            },
+            {
+              pattern: /ShippingAddressForm/g,
+              replacement: () => 'AddressForm'
+            }
+          ]
+        })
+      });
+
+      config.module.rules.push({
         test: /Product\.vue$/,
         loader: StringReplacePlugin.replace({
           replacements: [

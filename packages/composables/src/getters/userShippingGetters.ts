@@ -1,30 +1,30 @@
+import { AgnosticSavedAddress } from '../types';
 import { UserShippingGetters } from '@vue-storefront/core';
 
-const userGetters: UserShippingGetters<any, any> = {
-  getAddresses: (shipping, criteria?: Record<string, any>) => {
-    const { addresses } = shipping;
+const userGetters: UserShippingGetters<AgnosticSavedAddress[], AgnosticSavedAddress> = {
+  getAddresses: (addresses, criteria?: Record<string, any>) => {
     if (!criteria || !Object.keys(criteria).length) {
       return addresses;
     }
     const entries = Object.entries(criteria);
-    return shipping.addresses.filter(
+    return addresses.filter(
       address => entries.every(([key, value]) => address[key] === value)
     );
   },
-  getDefault: shipping => shipping.addresses.find(address => address.isDefault),
-  getTotal: shipping => shipping.addresses.length,
-  getPostCode: address => address ? address.zipCode : '',
+  getDefault: addresses => addresses.find(address => address.isDefault),
+  getTotal: addresses => addresses.length,
+  getPostCode: address => address ? address.postalCode : '',
   getStreetName: address => address ? address.streetName : '',
-  getStreetNumber: address => address ? address.streetNumber : '',
+  getStreetNumber: () => '',
   getCity: address => address ? address.city : '',
   getFirstName: address => address ? address.firstName : '',
   getLastName: address => address ? address.lastName : '',
   getCountry: address => address ? address.country : '',
-  getPhone: address => address ? address.phoneNumber : '',
-  getEmail: address => address ? address.email : '',
+  getPhone: address => address ? address.phone : '',
+  getEmail: () => '',
   getProvince: address => address ? address.state : '',
-  getCompanyName: address => address ? address.company : '',
-  getTaxNumber: address => address ? address.taxId : '',
+  getCompanyName: () => '',
+  getTaxNumber: () => '',
   getId: address => address ? address.id : '',
   getApartmentNumber: address => address ? address.apartment : '',
   isDefault: address => address ? address.isDefault : false

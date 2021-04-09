@@ -3,6 +3,7 @@ import {
   Order,
   LineItem,
   Customer,
+  CustomerAddress,
   Category,
   Product,
   ProductSearchParams,
@@ -21,6 +22,10 @@ export interface CustomersApi {
   refreshToken(): Promise<string>;
   signIn(username: string, password: string): Promise<{ customer: Customer, token: string }>;
   getCustomer(): Promise<Customer>;
+  getAddresses(): Promise<CustomerAddress[]>;
+  createAddress(address: CustomerAddress): Promise<CustomerAddress>;
+  updateAddress(address: CustomerAddress): Promise<CustomerAddress>;
+  deleteAddress(address: CustomerAddress): Promise<void>;
   createCustomer(email: string, password: string, firstName: string, lastName: string): Promise<Customer>;
   updateCustomer(email: string, firstName: string, lastName: string): Promise<Customer>;
   updateCustomerPassword(currentPassword: string, newPassword: string): Promise<Customer>;

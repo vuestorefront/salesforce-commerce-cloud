@@ -27,6 +27,15 @@ declare module 'commercecloud-ocapi-client' {
     last_modified?: Date;
   }
 
+  export type CustomerAddressResult = {
+    count: number;
+    data: CustomerAddress[];
+    next: string;
+    previous: string;
+    select: string;
+    total: number;
+  }
+
   export type CustomerPaymentInstrument = import('../common/payment').PaymentInstrument & {
     bank_routing_number: string;
     creation_date: Date;

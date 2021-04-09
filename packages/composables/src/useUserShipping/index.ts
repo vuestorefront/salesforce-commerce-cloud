@@ -1,54 +1,9 @@
-import {
-  Context,
-  useUserShippingFactory,
-  UseUserShippingFactoryParams
-} from '@vue-storefront/core';
+import { AgnosticSavedAddress } from '../types';
+import { getAgnosticAddress, getApiAddress } from '../mapping';
+import { Context, CustomerAddress } from '@vue-storefront/sfcc-api';
+import { useUserShippingFactory, UseUserShippingFactoryParams } from '@vue-storefront/core';
 
-const addresses: any[] = [
-  {
-    id: 1,
-    email: 'john@gmail.com',
-    firstName: 'John',
-    lastName: 'Doe',
-    streetName: 'Warsawska',
-    apartment: '24/193A',
-    city: 'Phoenix',
-    state: null,
-    zipCode: '26-620',
-    country: 'US',
-    phoneNumber: '560123456',
-    isDefault: true
-  },
-  {
-    id: 2,
-    email: 'havaka@gmail.com',
-    firstName: 'Jonatan',
-    lastName: 'Doe',
-    streetName: 'Starachowicka',
-    apartment: '20/193A',
-    city: 'Atlanta',
-    state: null,
-    zipCode: '53-603',
-    country: 'US',
-    phoneNumber: '560123456',
-    isDefault: false
-  }
-];
-
-const shipping = {
-  addresses
-};
-
-const findBiggestId = () => addresses.reduce((highest, { id }) => Math.max(highest, id), 0);
-
-const disableOldDefault = () => {
-  const oldDefault = addresses.find(address => address.isDefault);
-  if (oldDefault) {
-    oldDefault.isDefault = false;
-  }
-};
-
-const sortDefaultAtTop = (a, b) => {
+const sortDefaultAtTop = (a: AgnosticSavedAddress, b: AgnosticSavedAddress) => {
   if (a.isDefault) {
     return -1;
   } else if (b.isDefault) {
@@ -57,81 +12,81 @@ const sortDefaultAtTop = (a, b) => {
   return 0;
 };
 
-const params: UseUserShippingFactoryParams<any, any> = {
-  addAddress: async (context: Context, params?) => {
-    console.log('Mocked: addAddress', params.address);
+const params: UseUserShippingFactoryParams<AgnosticSavedAddress[], AgnosticSavedAddress> = {
+  addAddress: async (context: Context, { address, shipping }) => {
+    const newAddress = await context.$sfcc.api.createCustomerAddress(
+      getApiAddress(address) as CustomerAddress
+    );
 
-    const newAddress = {
-      ...params.address,
-      id: findBiggestId() + 1
-    };
-
-    if (params.address.isDefault) {
-      disableOldDefault();
-      addresses.unshift(newAddress);
-    } else {
-      addresses.push(newAddress);
+    if (newAddress.preferred) {
+      return [
+        getAgnosticAddress(newAddress),
+        ...shipping.map((existingAddress) => ({
+          ...existingAddress,
+          isDefault: false,
+        }))
+      ];
     }
 
-    return Promise.resolve(shipping);
+    return [
+      ...shipping,
+      getAgnosticAddress(newAddress)
+    ];
   },
 
-  deleteAddress: async (context: Context, params?) => {
-    console.log('Mocked: deleteAddress', params);
+  deleteAddress: async (context: Context, { address, shipping }) => {
+    await context.$sfcc.api.deleteCustomerAddress(
+      getApiAddress(address) as CustomerAddress
+    );
 
-    const indexToRemove = addresses.findIndex(address => address.id === params.address.id);
-    if (indexToRemove < 0) {
-      return Promise.reject('This address does not exist');
+    const remainingAddresses = shipping.filter(
+      (existingAddress) => existingAddress.id !== address.id
+    );
+
+    if (address.isDefault) {
+      remainingAddresses[0].isDefault = true;
     }
 
-    addresses.splice(indexToRemove, 1);
-    return Promise.resolve(shipping);
+    return remainingAddresses;
   },
 
-  updateAddress: async (context: Context, params?) => {
-    console.log('Mocked: updateAddress', params);
+  updateAddress: async (context: Context, { address, shipping }) => {
+    await context.$sfcc.api.updateCustomerAddress(
+      getApiAddress(address) as CustomerAddress
+    );
 
-    const indexToUpdate = addresses.findIndex(address => address.id === params.address.id);
-    if (indexToUpdate < 0) {
-      return Promise.reject('This address does not exist');
-    }
+    return shipping.map((existingAddress) => {
+      if (existingAddress.id === address.id) {
+        return address;
+      }
 
-    const isNewDefault = params.address.isDefault && addresses[0].id !== params.address.id;
+      if (existingAddress.isDefault) {
+        return { ...existingAddress, isDefault: false };
+      }
 
-    if (isNewDefault) {
-      disableOldDefault();
-    }
-
-    addresses[indexToUpdate] = params.address;
-
-    if (isNewDefault) {
-      addresses.sort(sortDefaultAtTop);
-    }
-    return Promise.resolve(shipping);
+      return existingAddress;
+    }).sort(sortDefaultAtTop);
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  load: async (context: Context, params?) => {
-    console.log('Mocked: load');
-    return Promise.resolve(shipping);
-  },
+  load: async (context: Context) => (await context.$sfcc.api.getCustomerAddresses()).map(getAgnosticAddress),
 
-  setDefaultAddress: async (context: Context, params?) => {
-    console.log('Mocked: setDefault');
-    const isDefault = id => addresses[0].id === id;
+  setDefaultAddress: async (context: Context, { address, shipping }) => {
+    if (!address.isDefault) {
+      const updatedAddress = { ...address, isDefault: true };
 
-    if (!isDefault(params.address.id)) {
-      const indexToUpdate = addresses.findIndex(address => address.id === params.address.id);
-      if (indexToUpdate < 0) {
-        return Promise.reject('This address does not exist');
-      }
-      disableOldDefault();
-      addresses[indexToUpdate].isDefault = true;
-      addresses.sort(sortDefaultAtTop);
+      await context.$sfcc.api.updateCustomerAddress(
+        getApiAddress(updatedAddress) as CustomerAddress
+      );
+
+      return [
+        updatedAddress,
+        ...shipping.slice(1).map((existingAddress) => ({ ...existingAddress, isDefault: false}))
+      ];
     }
 
-    return Promise.resolve(shipping);
+    return shipping.slice();
   }
 };
 
-export default useUserShippingFactory<any, any>(params);
+export default useUserShippingFactory<AgnosticSavedAddress[], AgnosticSavedAddress>(params);

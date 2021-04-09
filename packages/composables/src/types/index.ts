@@ -60,6 +60,11 @@ export type AgnosticAddress = {
   phone?: string;
 };
 
+export type AgnosticSavedAddress = AgnosticAddress & {
+  id: string;
+  isDefault: boolean;
+};
+
 export type UserAddress = Record<string, unknown>;
 
 export type Cart = Record<string, unknown>;

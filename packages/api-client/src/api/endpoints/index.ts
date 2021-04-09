@@ -4,6 +4,10 @@ import guestSignIn from './guestSignIn';
 import refreshToken from './refreshToken';
 import signIn from './signIn';
 import getCustomer from './getCustomer';
+import getCustomerAddresses from './getCustomerAddresses';
+import createCustomerAddress from './createCustomerAddress';
+import updateCustomerAddress from './updateCustomerAddress';
+import deleteCustomerAddress from './deleteCustomerAddress';
 import { getProduct, getProducts } from './getProduct';
 import getWishlist from './getWishlist';
 import addToWishlist from './addToWishlist';
@@ -36,6 +40,10 @@ const endpoints = {
   refreshToken,
   signIn,
   getCustomer,
+  getCustomerAddresses,
+  createCustomerAddress,
+  updateCustomerAddress,
+  deleteCustomerAddress,
   createCustomer,
   updateCustomer,
   updateCustomerPassword,
