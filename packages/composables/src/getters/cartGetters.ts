@@ -1,7 +1,7 @@
 import { CartGetters, AgnosticPrice, AgnosticTotals, AgnosticCoupon, AgnosticDiscount } from '@vue-storefront/core';
 import { Cart, LineItem } from '@vue-storefront/sfcc-api';
 
-export const getCartItems = (cart: Cart): LineItem[] => cart.lineItems;
+export const getCartItems = (cart: Cart): LineItem[] => cart ? cart.lineItems : [];
 
 export const getCartItemName = (product: LineItem): string => product.name;
 
@@ -41,7 +41,7 @@ export const getCartTotals = (cart: Cart): AgnosticTotals => ({
 
 export const getCartShippingPrice = (cart: Cart): number => cart.shippingTotal;
 
-export const getCartTotalItems = (cart: Cart): number => (cart.lineItems || []).reduce((total, item) => total + item.quantity, 0);
+export const getCartTotalItems = (cart: Cart): number => ((cart && cart.lineItems) || []).reduce((total, item) => total + item.quantity, 0);
 
 export const getFormattedPrice = (price: number): string | null => price && String(price);
 

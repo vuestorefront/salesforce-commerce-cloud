@@ -167,11 +167,57 @@ declare module 'commercecloud-ocapi-client' {
     tax_class_id: string;
     tax_rate: number;
   };
-  export type Basket = {
+  export type PaymentCardSpec = {
+    card_type: string;
+    checksum_verification_enabled: boolean;
+    description: string;
+    image: string;
+    name: string;
+    number_lengths: string[];
+    number_prefixes: string[];
+    security_code_length: number;
+  };
+  export type PaymentMethod = {
+    cards: PaymentCardSpec[];
+    description: string;
+    id: string;
+    image?: string;
+    name: string;
+    payment_processor_id: string;
+  };
+  export type PaymentBankAccountRequest = {
+    drivers_license: string;
+    drivers_license_state_code: string;
+    holder: string;
+    number: string;
+  };
+  export type OrderPaymentCardRequest = {
+    card_type: string;
+    credit_card_token: string;
+    expiration_month: number;
+    expiration_year: number;
+    holder: string;
+    issue_number: string;
+    number: string;
+    security_code: string;
+    valid_from_month: number;
+    valid_from_year: number;
+  };
+  export type BasketPaymentInstrumentRequest = {
+    amount: number;
+    bank_routing_number?: string;
+    customer_payment_instrument_id?: string;
+    gift_certificate_code?: string;
+    payment_bank_account?: PaymentBankAccountRequest;
+    payment_card?: OrderPaymentCardRequest;
+    payment_method_id: string;
+  };
+  export type OrderPaymentInstrumentRequest = BasketPaymentInstrumentRequest & {
+    create_customer_payment_instrument?: boolean;
+  };
+  type LineItemCtnr ={
     adjusted_merchandize_total_tax: number;
     adjusted_shipping_total_tax: number;
-    agent_basket: boolean;
-    basket_id: string;
     billing_address: OrderAddress;
     bonus_discount_line_items: BonusDiscountLineItem[];
     channel_type: string;
@@ -180,7 +226,6 @@ declare module 'commercecloud-ocapi-client' {
     currency: string;
     customer_info: CustomerInfo;
     gift_certificate_items: GiftCertificateItem[];
-    inventory_reservation_expiry: Date;
     last_modified: Date;
     merchandize_total_tax: number;
     notes: SimpleLink;
@@ -197,5 +242,24 @@ declare module 'commercecloud-ocapi-client' {
     source_code: string;
     tax_total: number;
     taxation: string;
+  };
+  export type Basket = LineItemCtnr & {
+    agent_basket: boolean;
+    basket_id: string;
+    inventory_reservation_expiry: Date;
+  };
+  export type Order = LineItemCtnr & {
+    confirmation_status: string;
+    created_by: string;
+    customer_name: string;
+    export_status: string;
+    external_order_status: string;
+    global_party_id: string;
+    order_no: string;
+    order_token: string;
+    payment_status: string;
+    shipping_status: string;
+    site_id: string;
+    status: string;
   };
 }

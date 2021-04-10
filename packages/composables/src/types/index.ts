@@ -48,6 +48,18 @@ export type User = {
   email?: string;
 };
 
+export type AgnosticAddress = {
+  firstName?: string;
+  lastName?: string;
+  streetName?: string;
+  apartment?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+  phone?: string;
+};
+
 export type UserAddress = Record<string, unknown>;
 
 export type Cart = Record<string, unknown>;
@@ -82,4 +94,10 @@ export type OrderSearchParams = Record<string, any>;
 export type OrdersResponse = {
   data: any[];
   total: number;
+};
+
+export type AgnosticPaymentMethod = {
+  label: string;
+  value: string;
+  description?: string;
 };

@@ -17,6 +17,13 @@ import removeFromCart from './removeFromCart';
 import addCouponToCart from './addCouponToCart';
 import removeCouponFromCart from './removeCouponFromCart';
 import updateCartItem from './updateCartItem';
+import saveShippingAddress from './saveShippingAddress';
+import saveBillingAddress from './saveBillingAddress';
+import saveShippingMethod from './saveShippingMethod';
+import savePaymentInstrument from './savePaymentInstrument';
+import createOrder from './createOrder';
+import getApplicablePaymentMethods from './getApplicablePaymentMethods';
+import getApplicableShippingMethods from './getApplicableShippingMethods';
 
 import { wrapAuthHandler } from './helpers/auth';
 
@@ -39,6 +46,13 @@ const endpoints = {
   addCouponToCart,
   removeCouponFromCart,
   updateCartItem,
+  saveShippingAddress,
+  saveBillingAddress,
+  saveShippingMethod,
+  savePaymentInstrument,
+  createOrder,
+  getApplicablePaymentMethods,
+  getApplicableShippingMethods,
 }
 
 export default wrapAuthHandler(endpoints) as Endpoints;

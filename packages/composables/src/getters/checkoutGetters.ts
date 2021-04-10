@@ -1,19 +1,15 @@
 import { CheckoutGetters} from '@vue-storefront/core';
 import { ShippingMethod } from '@vue-storefront/sfcc-api';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getShippingMethodId = (shippingMethod: ShippingMethod): string => '';
+export const getShippingMethodId = (shippingMethod: ShippingMethod): string => shippingMethod && shippingMethod.id;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getShippingMethodName = (shippingMethod: ShippingMethod): string => '';
+export const getShippingMethodName = (shippingMethod: ShippingMethod): string => shippingMethod && shippingMethod.name;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getShippingMethodDescription = (shippingMethod: ShippingMethod): string => '';
+export const getShippingMethodDescription = (shippingMethod: ShippingMethod): string => (shippingMethod && shippingMethod.description) || '';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getShippingMethodPrice = (shippingMethod: ShippingMethod): number => 0;
+export const getShippingMethodPrice = (shippingMethod: ShippingMethod): number => shippingMethod && shippingMethod.price;
 
-export const getFormattedPrice = (price: number) => String(price);
+export const getFormattedPrice = (price: number): string => price && String(price);
 
 const checkoutGetters: CheckoutGetters<ShippingMethod> = {
   getShippingMethodId,

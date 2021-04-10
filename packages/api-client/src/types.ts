@@ -20,7 +20,17 @@ export type Customer = SdkCustomer.ShopperCustomers.Customer & {
   previousLoginTime?: Date;
   previousVisitTime?: Date;
 };
-
+export type ContactInfo = {
+  customerId?: string;
+  customerNo?: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+};
+export type OrderAddress = SdkCheckout.ShopperOrders.OrderAddress;
+export type ShippingMethodResult = SdkCheckout.ShopperBaskets.ShippingMethodResult;
+export type PaymentMethodResult = SdkCheckout.ShopperBaskets.PaymentMethodResult;
+export type PaymentInstrument = SdkCheckout.ShopperOrders.BasketPaymentInstrumentRequest
 export type Cart = SdkCheckout.ShopperBaskets.Basket & {
   lineItems?: LineItem[];
 };
@@ -87,18 +97,22 @@ export type ProductSearchResponse = {
   sortOptions: ProductSortingOption[];
 }
 export type CategoryFilter = Record<string, unknown>;
-export type ShippingMethod = Record<string, unknown>;
+export type PaymentMethod = SdkCheckout.ShopperOrders.PaymentMethod;
+export type ShippingMethod = SdkCheckout.ShopperOrders.ShippingMethod;
+export declare type BasketShippingMethods = SdkCheckout.ShopperBaskets.ShippingMethodResult;
 export type LineItem = Product & {
   itemId: string;
   quantity: number;
 };
+export type Order = SdkCheckout.ShopperOrders.Order;
 
 export type ApiClients = {
   CustomersApi: Apis.CustomersApi,
   CategoriesApi: Apis.CategoriesApi,
   ProductsApi: Apis.ProductsApi,
   ProductSearchApi: Apis.ProductSearchApi,
-  CartsApi: Apis.CartsApi
+  CartsApi: Apis.CartsApi,
+  OrdersApi: Apis.OrdersApi
 }
 
 export type SfccSetupConfig = IntegrationContext<ApiClients, ApiClientSettings>;
@@ -124,6 +138,14 @@ export type Endpoints = {
   addCouponToCart(context: SfccIntegrationContext, cartId: string, couponCode: string): Promise<Cart>;
   removeCouponFromCart(context: SfccIntegrationContext, cartId: string, couponItemId: string): Promise<Cart>;
   updateCartItem(context: SfccIntegrationContext, cartId: string, item: LineItem, quantity: number): Promise<Cart>;
+  getApplicablePaymentMethods(context: SfccIntegrationContext, cartId: string): Promise<PaymentMethod[]>;
+  getApplicableShippingMethods(context: SfccIntegrationContext, cartId: string): Promise<BasketShippingMethods>;
+  saveShippingAddress(context: SfccIntegrationContext, cartId: string, shippingAddress: OrderAddress, shipmentId?: string): Promise<Cart>;
+  saveShippingMethod(context: SfccIntegrationContext, cartId: string, shippingAddress: OrderAddress, shipmentId?: string): Promise<Cart>;
+  saveBillingAddress(context: SfccIntegrationContext, cartId: string, billingAddress: OrderAddress): Promise<Cart>;
+  savePaymentInstrument(context: SfccIntegrationContext, cartId: string, paymentMethodId: string, amount: number, body: any): Promise<Cart>;
+  updateCart(context: SfccIntegrationContext, cartId: string, contactInfo: ContactInfo, shippingAddress: OrderAddress, shippingMethodId: string, billingAddress: OrderAddress, paymentMethodId: string): Promise<Cart>;
+  createOrder(context: SfccIntegrationContext, cartId: string): Promise<Order>;
 };
 
 export type ContextualizedEndpoints = {

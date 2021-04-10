@@ -1,13 +1,18 @@
 import {
   Cart,
+  Order,
   LineItem,
   Customer,
   Category,
   Product,
   ProductSearchParams,
   ProductSearchResponse,
+  ContactInfo,
+  OrderAddress,
   SfccIntegrationContext
 } from '../../types';
+
+import { Checkout } from 'commerce-sdk';
 
 export interface CustomersApi {
   guestSignIn(): Promise<string>;
@@ -41,4 +46,16 @@ export interface CartsApi {
   addCouponToCart(context: SfccIntegrationContext, cartId: string, couponCode: string): Promise<Cart>;
   removeCouponFromCart(context: SfccIntegrationContext, cartId: string, couponItemId: string): Promise<Cart>;
   resetCart(context: SfccIntegrationContext, cartId: string): Promise<Cart>;
+  getShippingMethods(cartId: string, shipmentId: string): Promise<Checkout.ShopperBaskets.ShippingMethodResult>;
+  getPaymentMethods(cartId: string): Promise<Checkout.ShopperBaskets.PaymentMethodResult>;
+  updateCartContactInfo(context: SfccIntegrationContext, cartId: string, contactInfo: ContactInfo): Promise<Cart>;
+  setShippingAddress(context: SfccIntegrationContext, cartId: string, shipmentId: string, address: OrderAddress): Promise<Cart>;
+  setBillingAddress(context: SfccIntegrationContext, cartId: string, address: OrderAddress): Promise<Cart>;
+  selectShippingMethod(context: SfccIntegrationContext, cartId: string, shipmentId: string, shippingMethodId: string): Promise<Cart>;
+  addPayment(context: SfccIntegrationContext, cartId: string, paymentMethodId: string, amount: number, body: any): Promise<Cart>;
+}
+
+export interface OrdersApi {
+  createOrder(context: SfccIntegrationContext, cartId: string): Promise<Order>;
+  authorizePayments(context: SfccIntegrationContext, order: Order): Promise<Order>;
 }

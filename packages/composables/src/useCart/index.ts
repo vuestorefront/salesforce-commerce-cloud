@@ -1,4 +1,4 @@
-import { useCartFactory, UseCartFactoryParams } from '@vue-storefront/core';
+import { useCartFactory, UseCart, UseCartFactoryParams } from '@vue-storefront/core';
 import { Context, Cart, LineItem, Product, CouponItem } from '@vue-storefront/sfcc-api';
 
 const params: UseCartFactoryParams<Cart, LineItem, Product, CouponItem> = {
@@ -27,5 +27,7 @@ const params: UseCartFactoryParams<Cart, LineItem, Product, CouponItem> = {
 
   isInCart: (_: Context, { currentCart, product }) => Boolean((currentCart.productItems || []).find((item) => item.productId === product._id))
 };
+
+export type UseCartComposable = UseCart<Cart, LineItem, Product, CouponItem>;
 
 export default useCartFactory<Cart, LineItem, Product, CouponItem>(params);

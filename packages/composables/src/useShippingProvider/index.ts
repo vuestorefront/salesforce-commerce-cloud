@@ -1,22 +1,57 @@
-import { useShippingProviderFactory, UseShippingProviderParams, Context } from '@vue-storefront/core';
-import { Shipping, ShippingMethod } from '../types';
+import useCart, { UseCartComposable } from '../useCart';
+import { Context, ShippingMethodResult, ShippingMethod } from '@vue-storefront/sfcc-api';
+import { useShippingProviderFactory, UseShippingProviderParams } from '@vue-storefront/core';
 
-let provider = {};
+type ProviderContext = Context & {
+  cart: UseCartComposable;
+};
 
-const params: UseShippingProviderParams<Shipping, ShippingMethod> = {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  load: async (context: Context, { customQuery }) => {
-    console.log('Mocked: loadShippingProvider');
+type ShippingState = ShippingMethodResult & {
+  selectedShippingMethod: ShippingMethod;
+};
 
-    return provider;
+const params: UseShippingProviderParams<ShippingState, ShippingMethod> = {
+  provide() {
+    return {
+      cart: useCart(),
+    };
+  },
+  load: async (context: ProviderContext): Promise<ShippingState> => {
+    if (!context.cart.cart.value) {
+      await context.cart.load();
+    }
+
+    const methodsResult = await context.$sfcc.api.getApplicableShippingMethods(
+      context.cart.cart.value.basketId
+    );
+
+    const selectedMethod = context.cart.cart.value.shipments[0].shippingMethod;
+
+    return {
+      ...methodsResult,
+      selectedShippingMethod: selectedMethod && methodsResult.applicableShippingMethods.find(
+        (method) => method.id === selectedMethod.id
+      )
+    };
   },
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  save: async (context: Context, { shippingMethod, customQuery }) => {
-    console.log('Mocked: saveShippingProvider');
-    provider = shippingMethod;
-    return provider;
+  save: async (context: ProviderContext, { shippingMethod, state }): Promise<ShippingState> => {
+    if (!context.cart.cart.value) {
+      await context.cart.load();
+    }
+
+    const cart = await context.$sfcc.api.saveShippingMethod(
+      context.cart.cart.value.basketId,
+      shippingMethod
+    );
+
+    context.cart.setCart(cart);
+
+    return {
+      ...state.value,
+      selectedShippingMethod: shippingMethod
+    };
   }
 };
 
-export default useShippingProviderFactory<Shipping, ShippingMethod>(params);
+export default useShippingProviderFactory<ShippingState, ShippingMethod>(params);

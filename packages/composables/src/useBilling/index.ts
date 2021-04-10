@@ -1,21 +1,42 @@
-import { useBillingFactory, UseBillingParams, Context } from '@vue-storefront/core';
-import { Address } from '../types';
+import useCart, { UseCartComposable } from '../useCart';
+import { useBillingFactory, UseBillingParams } from '@vue-storefront/core';
+import { Context } from '@vue-storefront/sfcc-api';
+import { AgnosticAddress } from '../types';
+import { getApiAddress, getAgnosticAddress } from '../mapping';
 
-let details = {};
+type ProviderContext = Context & {
+  cart: UseCartComposable;
+};
 
-const params: UseBillingParams<Address, any> = {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  load: async (context: Context, { customQuery }) => {
-    console.log('Mocked: loadBilling');
-    return details;
+const params: UseBillingParams<AgnosticAddress, any> = {
+  provide() {
+    return {
+      cart: useCart(),
+    };
+  },
+  load: async (context: ProviderContext) => {
+    if (!context.cart.cart.value) {
+      await context.cart.load();
+    }
+
+    return getAgnosticAddress(context.cart.cart.value.billingAddress || {});
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  save: async (context: Context, { billingDetails, customQuery }) => {
-    console.log('Mocked: saveBilling');
-    details = billingDetails;
-    return details;
+  save: async (context: ProviderContext, { billingDetails }) => {
+    if (!context.cart.cart.value) {
+      await context.cart.load();
+    }
+
+    const cart = await context.$sfcc.api.saveBillingAddress(
+      context.cart.cart.value.basketId,
+      getApiAddress(billingDetails)
+    );
+
+    context.cart.setCart(cart);
+
+    return billingDetails;
   }
 };
 
-export default useBillingFactory<Address, any>(params);
+export default useBillingFactory<AgnosticAddress, any>(params);

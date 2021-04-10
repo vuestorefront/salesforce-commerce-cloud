@@ -1,13 +1,23 @@
-import { Order } from '../types';
-import { UseMakeOrder, useMakeOrderFactory, Context } from '@vue-storefront/core';
+import useCart, { UseCartComposable } from '../useCart';
+import { Context, Order } from '@vue-storefront/sfcc-api';
+import { UseMakeOrder, useMakeOrderFactory } from '@vue-storefront/core';
+
+type ProviderContext = Context & {
+  cart: UseCartComposable;
+};
 
 const factoryParams = {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  make: async (context: Context, { customQuery }): Promise<Order> => {
-    console.log('Mocked: makeOrder');
+  provide() {
     return {
-      id: '123-456-7890'
+      cart: useCart(),
     };
+  },
+  make: async (context: ProviderContext): Promise<Order> => {
+    if (!context.cart.cart.value) {
+      await context.cart.load();
+    }
+
+    return await context.$sfcc.api.createOrder(context.cart.cart.value.basketId);
   }
 };
 
