@@ -1,6 +1,6 @@
 # theme
 
-> Boilerplate theme
+> SFCC theme
 
 ## Build Setup
 

@@ -11,7 +11,7 @@ const params: UseProductFactoryParams<ProductsResponse, any> = {
     console.log('Mocked: productsSearch');
     const { customQuery, ...searchParams } = params;
 
-    return await context.$boilerplate.api.getProduct(searchParams, customQuery);
+    return await context.$sfcc.api.getProduct(searchParams, customQuery);
   }
 };
 

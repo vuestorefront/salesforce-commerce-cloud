@@ -1,6 +1,6 @@
 {
-  "name": "@vue-storefront/boilerplate",
-  "version": "2.3.0-rc.3",
+  "name": "@vue-storefront/sfcc",
+  "version": "1.0.0-beta.0",
   "private": true,
   "sideEffects": false,
   "main": "lib/index.cjs.js",
@@ -13,7 +13,7 @@
     "prepublish": "yarn build"
   },
   "dependencies": {
-    "@vue-storefront/boilerplate-api": "^2.3.0-rc.3",
+    "@vue-storefront/sfcc-api": "^1.0.0-beta.0",
     "@vue-storefront/core": "^2.3.0-rc.3"
   },
   "peerDependencies": {
