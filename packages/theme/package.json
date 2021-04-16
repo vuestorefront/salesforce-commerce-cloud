@@ -1,6 +1,6 @@
 {
   "name": "@vue-storefront/sfcc-theme",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0-beta.1",
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build -m",
@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@storefront-ui/vue": "^0.10.3",
-    "@vue-storefront/sfcc": "^1.0.0-beta.0",
+    "@vue-storefront/sfcc": "^1.0.0-beta.1",
     "@vue-storefront/middleware": "^2.3.0-rc.3",
     "@vue-storefront/nuxt": "^2.3.0-rc.3",
     "@vue-storefront/nuxt-theme": "^2.3.0-rc.3",
