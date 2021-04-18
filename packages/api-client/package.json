@@ -27,7 +27,8 @@
     "js-base64": "^3.6.0"
   },
   "files": [
-    "lib/**/*"
+    "lib/**/*",
+    "server/**/*"
   ],
   "publishConfig": {
     "access": "public"
