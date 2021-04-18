@@ -1,6 +1,6 @@
 {
   "name": "@vue-storefront/sfcc",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0-beta.2",
   "private": false,
   "sideEffects": false,
   "main": "lib/index.cjs.js",
@@ -16,8 +16,8 @@
     "@types/set-cookie-parser": "^2.4.0"
   },
   "dependencies": {
-    "@vue-storefront/sfcc-api": "^1.0.0-beta.0",
     "@vue-storefront/core": "^2.3.0-rc.3",
+    "@vue-storefront/sfcc-api": "^1.0.0-beta.2",
     "set-cookie-parser": "^2.4.7"
   },
   "peerDependencies": {
