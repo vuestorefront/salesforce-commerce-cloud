@@ -1,6 +1,6 @@
 <img src="https://blog.vuestorefront.io/wp-content/uploads/2020/01/1QU9F6hQlFyHsJIbsdmt6FA.png" height="100px" />
 
-## Vue Storefront 2 integration with Salesforce Commerce Cloud B2C
+## Vue Storefront 2 integration with Salesforce Commerce Cloud B2C (beta)
 
 This project is a Salesforce Commerce Cloud integration for Vue Storefront 2.
 This integration is being developed and maintained by superheroes from [Forkpoint](https://forkpoint.com/) ❤️
