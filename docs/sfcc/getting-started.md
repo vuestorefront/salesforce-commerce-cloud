@@ -3,7 +3,7 @@
 
 ## Configuring your SFCC integration
 
-You can [generate your project from our CLI](/general/getting-started.html).
+First you should [generate your project from our CLI](https://docs.vuestorefront.io/v2/general/getting-started.html).
 
 The first thing you should do after setting it up is changing the credentials to point into your instance.
 
