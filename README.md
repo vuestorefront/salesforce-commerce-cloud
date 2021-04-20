@@ -27,7 +27,7 @@ Want to contribute? Ping us on `salesforce-commerce-cloud` channel on [our Disco
 ## Resources
 
 - [Vue Storefront Documentation](https://docs.vuestorefront.io/v2/)
-- [Magento 2 integration Documentation (WIP)](https://docs.vuestorefront.io/sfcc)
+- [SFCC integration Documentation](https://docs.vuestorefront.io/sfcc)
 - [Community Chat](https://discord.vuestorefront.io)
 
 ## Support
