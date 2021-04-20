@@ -2,6 +2,6 @@
 
 This is a documentation for Vue Storefront integration with SFCC.
 
-This Open Source integration is currently a **work in progress** and not ready for production usage.
+This integration is currently a **beta** and not ready for production usage. You can help us making the integration production-ready faster by reporting bugs and contributing to the code.
 
-If you'd like to use Vue Storefront in production we suggest using the Enterprise version. [Contact us](https://www.vuestorefront.io/contact/sales) to learn more
+This integration is developed and maintained by superheroes from [Forkpoint](https://forkpoint.com/)
