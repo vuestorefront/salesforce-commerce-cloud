@@ -2,8 +2,8 @@
 
 ## Vue Storefront 2 integration with Salesforce Commerce Cloud B2C
 
-This project is a Magento 2 integration for Vue Storefront 2.
-This integration is being developed by [Forkpoint](https://forkpoint.com/)
+This project is a Salesforce Commerce Cloud integration for Vue Storefront 2.
+This integration is being developed and maintained by superheroes from [Forkpoint](https://forkpoint.com/) ❤️
 
 ## How to start if you want to try out the integration
 
