@@ -10,7 +10,7 @@ SFCC configuration is located in two places:
 
 ```js
 // nuxt.config.js
-['@vue-storefront/sfcc/nuxt', {}]
+['@vue-storefront/sfcc/nuxt']
 ```
 
 ## Middleware SFCC configuration

@@ -1,5 +1,4 @@
 import webpack from 'webpack';
-import sfccConfig from './middleware.config';
 
 export default {
   mode: 'universal',
@@ -72,7 +71,7 @@ export default {
     /* project-only-start
     ['@vue-storefront/nuxt-theme'],
     project-only-end */
-    ['@vue-storefront/sfcc/nuxt', sfccConfig.integrations.sfcc.configuration]
+    ['@vue-storefront/sfcc/nuxt']
   ],
   modules: [
     'nuxt-i18n',
