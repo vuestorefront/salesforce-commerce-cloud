@@ -39,6 +39,7 @@ module.exports = {
           authToken: process.env.SFCC_COOKIES_API_TOKEN || 'vsf-sfcc-api-token'
         },
         clientHeaders: {
+          authToken: process.env.SFCC_CLIENT_HEADERS_AUTH_TOKEN || 'x-vsf-sfcc-api-token',
           locale: process.env.SFCC_CLIENT_HEADERS_LOCALE || 'x-vsf-sfcc-locale'
         }
       }
@@ -59,4 +60,5 @@ module.exports = {
 - `cookieNames`
   - `authToken` - The name of the cookie in which the customer's current JWT authentication token will be stored
 - `clientHeaders`
+  - `authToken` - The name of the HTTP header in which the client will send the current JWT token to the API
   - `locale` - The name of the HTTP header in which the client will send the current locale to the API
