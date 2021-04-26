@@ -196,6 +196,7 @@ export interface ApiClientSettings {
     authToken?: string;
   },
   clientHeaders: {
+    authToken?: string;
     locale?: string;
   },
   callbacks?: {

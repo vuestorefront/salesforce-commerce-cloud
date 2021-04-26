@@ -18,10 +18,8 @@ module.exports = {
           authToken: process.env.SFCC_COOKIES_API_TOKEN || 'vsf-sfcc-api-token'
         },
         clientHeaders: {
+          authToken: process.env.SFCC_CLIENT_HEADERS_AUTH_TOKEN || 'x-vsf-sfcc-api-token',
           locale: process.env.SFCC_CLIENT_HEADERS_LOCALE || 'x-vsf-sfcc-locale'
-        },
-        callbacks: {
-          auth: {}
         }
       }
     }

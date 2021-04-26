@@ -1,6 +1,4 @@
 import webpack from 'webpack';
-import sfccConfig from './middleware.config';
-import StringReplacePlugin from 'string-replace-webpack-plugin';
 
 export default {
   mode: 'universal',
@@ -73,7 +71,7 @@ export default {
     /* project-only-start
     ['@vue-storefront/nuxt-theme'],
     project-only-end */
-    ['@vue-storefront/sfcc/nuxt', sfccConfig.integrations.sfcc.configuration]
+    ['@vue-storefront/sfcc/nuxt']
   ],
   modules: [
     'nuxt-i18n',
@@ -103,92 +101,6 @@ export default {
     scss: [require.resolve('@storefront-ui/shared/styles/_helpers.scss', { paths: [process.cwd()] })]
   },
   build: {
-    // TODO Handle these in theme files
-    extend(config) {
-      config.module.rules.push({
-        test: /MyAccount\.vue$/,
-        loader: StringReplacePlugin.replace({
-          replacements: [
-            {
-              pattern: /my-account-page_shipping-details/,
-              replacement: () => 'my-account-page_address-details'
-            },
-            {
-              pattern: /"Shipping details"/,
-              replacement: () => '"Address details"'
-            },
-            {
-              pattern: /<SfContentPage data-cy="my-account-page_billing-details" title="Billing details">\s+<BillingDetails \/>\s+<\/SfContentPage>/m,
-              replacement: () => ''
-            },
-            {
-              pattern: /import BillingDetails from '\.\/MyAccount\/BillingDetails';/,
-              replacement: () => ''
-            },
-            {
-              pattern: /BillingDetails,?/g,
-              replacement: () => ''
-            }
-          ]
-        })
-      });
-
-      config.module.rules.push({
-        test: /ShippingDetails\.vue$/,
-        loader: StringReplacePlugin.replace({
-          replacements: [
-            {
-              pattern: /UserShippingAddress/g,
-              replacement: () => 'UserAddress'
-            },
-            {
-              pattern: /ShippingAddressForm/g,
-              replacement: () => 'AddressForm'
-            }
-          ]
-        })
-      });
-
-      config.module.rules.push({
-        test: /Product\.vue$/,
-        loader: StringReplacePlugin.replace({
-          replacements: [
-            {
-              pattern: /\.\.\.filter/,
-              replacement: () => '...Object.entries(filter).reduce((acc, [key, attr]) => ({ ...acc, [key]: attr.value || attr }), {})'
-            },
-            {
-              pattern: /options\.color\.length > 1/,
-              replacement: () => 'options.color.length > 0'
-            }
-          ]
-        })
-      });
-
-      config.module.rules.push({
-        test: /Category\.vue$/,
-        loader: StringReplacePlugin.replace({
-          replacements: [
-            {
-              pattern: /addItemToWishlist,/,
-              replacement: () => 'addItemToWishlist, removeItemFromWishlist, isInWishlist,'
-            },
-            {
-              pattern: /{ addItem: addItemToWishlist }/,
-              replacement: () => '{ addItem: addItemToWishlist, removeItem: removeItemFromWishlist, isInWishlist }'
-            },
-            {
-              pattern: /:isInWishlist="false"/,
-              replacement: () => ':isInWishlist="isInWishlist({ product })"'
-            },
-            {
-              pattern: /@click:wishlist="addItemToWishlist\({ product }\)"/,
-              replacement: () => '@click:wishlist="isInWishlist({ product }) ? removeItemFromWishlist({ product }) : addItemToWishlist({ product })"'
-            }
-          ]
-        })
-      });
-    },
     babel: {
       plugins: [
         '@babel/plugin-proposal-optional-chaining'
@@ -198,7 +110,6 @@ export default {
       'vee-validate/dist/rules'
     ],
     plugins: [
-      new StringReplacePlugin(),
       new webpack.DefinePlugin({
         'process.VERSION': JSON.stringify({
           // eslint-disable-next-line global-require

@@ -20,14 +20,14 @@ const updateTokenIssuer = (token: string, compareIssuer: string, targetIssuer: s
   }
 
   return null;
-}
+};
 
 export default {
   name: 'sfcc-config',
   hooks: (req: Request, res: Response) => ({
     beforeCreate: ({ configuration }: { configuration: ApiClientSettings }) => {
-      let jwtToken = null;
-
+      configuration.callbacks = configuration.callbacks || {};
+      configuration.callbacks.auth = configuration.callbacks.auth || {};
       configuration.locale = req.headers[configuration.clientHeaders.locale] as string;
 
       Object.defineProperty(configuration, 'jwtToken', {
@@ -35,16 +35,19 @@ export default {
         configurable: true,
         get() {
           return updateTokenIssuer(
-            jwtToken || req.cookies[configuration.cookieNames.authToken],
+            req.headers[configuration.clientHeaders.authToken] ||
+            req.cookies[configuration.cookieNames.authToken],
             null,
             configuration.clientId
           );
         },
         set(newToken: string) {
-          jwtToken = updateTokenIssuer(newToken, configuration.clientId, null);
-          res.cookie(configuration.cookieNames.authToken, jwtToken);
+          res.set(
+            configuration.clientHeaders.authToken,
+            updateTokenIssuer(newToken, configuration.clientId, null)
+          );
         }
-      })
+      });
 
       if (!configuration.callbacks.auth.onTokenChange) {
         configuration.callbacks.auth.onTokenChange = (newToken: string) => {
