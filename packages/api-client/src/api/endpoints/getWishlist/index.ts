@@ -8,14 +8,14 @@ export default async function getWishlist(context: SfccIntegrationContext): Prom
   let wishlist: Wishlist = null;
 
   try {
-    wishlist = await context.client.WishlistsApi.getWishlist();
+    wishlist = await context.client.WishlistsApi.getWishlist(context);
   } catch (e) {
     // TODO Handle
   }
 
   if (!wishlist) {
     try {
-      wishlist = await context.client.WishlistsApi.createWishlist();
+      wishlist = await context.client.WishlistsApi.createWishlist(context);
     } catch (e) {
       // TODO Handle
     }

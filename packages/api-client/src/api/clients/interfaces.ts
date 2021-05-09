@@ -52,10 +52,10 @@ export interface ProductsApi {
 }
 
 export interface WishlistsApi {
-  getWishlist(): Promise<Wishlist>;
-  createWishlist(): Promise<Wishlist>;
-  addToWishlist(listId: string, productId: string): Promise<Wishlist>;
-  removeFromWishlist(listId: string, itemId: string): Promise<Wishlist>;
+  getWishlist(context: SfccIntegrationContext): Promise<Wishlist>;
+  createWishlist(context: SfccIntegrationContext): Promise<Wishlist>;
+  addToWishlist(context: SfccIntegrationContext, listId: string, productId: string): Promise<Wishlist>;
+  removeFromWishlist(context: SfccIntegrationContext, listId: string, itemId: string): Promise<Wishlist>;
 }
 
 export interface CartsApi {

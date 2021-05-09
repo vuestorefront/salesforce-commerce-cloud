@@ -5,5 +5,5 @@ export default async function addToWishlist(context: SfccIntegrationContext, lis
     return context.config.overrides.addToWishlist(context, listId, productId);
   }
 
-  return context.client.WishlistsApi.addToWishlist(listId, productId);
+  return context.client.WishlistsApi.addToWishlist(context, listId, productId);
 }
