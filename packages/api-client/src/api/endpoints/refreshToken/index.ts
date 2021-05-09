@@ -5,9 +5,9 @@ export default async function refreshToken(context: SfccIntegrationContext): Pro
     return await context.config.overrides.refreshToken(context);
   }
 
-  const token = await context.client.CustomersApi.refreshToken();
+  const tokens = await context.client.CustomersApi.refreshToken();
 
-  if (token && context.config.callbacks && context.config.callbacks.auth && context.config.callbacks.auth.onTokenChange) {
-    context.config.callbacks.auth.onTokenChange(token);
+  if (tokens && context.config.callbacks && context.config.callbacks.auth && context.config.callbacks.auth.onTokenChange) {
+    context.config.callbacks.auth.onTokenChange(tokens.capiToken, tokens.ocapiToken);
   }
 }

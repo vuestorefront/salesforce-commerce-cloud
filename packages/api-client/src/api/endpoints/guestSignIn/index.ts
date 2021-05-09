@@ -5,9 +5,9 @@ export default async function guestSignIn(context: SfccIntegrationContext): Prom
     return await context.config.overrides.guestSignIn(context);
   }
 
-  const token = await context.client.CustomersApi.guestSignIn();
+  const tokens = await context.client.CustomersApi.guestSignIn();
 
-  if (token && context.config.callbacks && context.config.callbacks.auth && context.config.callbacks.auth.onTokenChange) {
-    context.config.callbacks.auth.onTokenChange(token);
+  if (tokens && context.config.callbacks && context.config.callbacks.auth && context.config.callbacks.auth.onTokenChange) {
+    context.config.callbacks.auth.onTokenChange(tokens.capiToken, tokens.ocapiToken);
   }
 }

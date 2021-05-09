@@ -4,28 +4,33 @@ import { integrationPlugin } from '@vue-storefront/core';
 const moduleOptions = JSON.parse('<%= JSON.stringify(options) %>');
 
 const getAxiosConfig = ({ app, integration, req }) => {
-  const authCookie = moduleOptions.cookieNames.authToken;
-  const authHeader = moduleOptions.clientHeaders.authToken;
+  const capiAuthCookie = moduleOptions.cookieNames.capiAuthToken;
+  const ocapiAuthCookie = moduleOptions.cookieNames.ocapiAuthToken;
+  const capiAuthHeader = moduleOptions.clientHeaders.capiAuthToken;
+  const ocapiAuthHeader = moduleOptions.clientHeaders.ocapiAuthToken;
   const localeHeader = moduleOptions.clientHeaders.locale
 
   return {
     headers: {
-      [authHeader]: app.$cookies.get(authCookie) || '',
+      [capiAuthHeader]: app.$cookies.get(capiAuthCookie) || '',
+      [ocapiAuthHeader]: app.$cookies.get(ocapiAuthCookie) || '',
       [localeHeader]: app.i18n.locale,
     },
     transformResponse: [
       (data, headers) => {
-        if (headers[authHeader]) {
+        if (headers[capiAuthHeader] || headers[ocapiAuthHeader]) {
           const nestedConfig = getAxiosConfig({ app, integration, req });
 
-          app.context.$cookies.set(authCookie, headers[authHeader]);
+          app.context.$cookies.set(capiAuthCookie, headers[capiAuthHeader]);
+          app.context.$cookies.set(ocapiAuthCookie, headers[ocapiAuthHeader]);
 
           integration.configure('sfcc', {
             axios: {
               ...nestedConfig,
               headers: {
                 ...nestedConfig.headers,
-                [authHeader]: headers[authHeader]
+                [capiAuthHeader]: headers[capiAuthHeader],
+                [ocapiAuthHeader]: headers[ocapiAuthHeader]
               }
             }
           });

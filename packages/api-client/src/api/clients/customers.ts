@@ -2,7 +2,7 @@ import ShopApi from 'commercecloud-ocapi-client';
 import { Customer, ClientConfig } from 'commerce-sdk';
 import { getObjectFromResponse } from '@commerce-apps/core';
 
-import { CustomersApi } from './interfaces';
+import { CustomersApi, TokensResponse } from './interfaces';
 import { Cart, Customer as ApiCustomer, CustomerAddress, Order, OrderSearchParams, SfccIntegrationContext } from '../../types';
 import { mapCart } from '../mapping/shared/cartMapping';
 import { mapOrder } from '../mapping/shared/orderMapping';
@@ -15,43 +15,81 @@ import {
   mapToOcapiCustomerAddress
 } from '../mapping/ocapi/ocapiCustomerMapping';
 
-export class OcapiCustomersApi implements CustomersApi {
-  protected config: ShopApi.ApiConfig;
-  protected api: ShopApi.CustomersApi;
-  protected customerId: string;
+class BaseCustomersApi {
+  protected capiConfig: ClientConfig;
+  protected ocapiConfig: ShopApi.ApiConfig;
+  protected capiApi: Customer.ShopperCustomers;
+  protected ocapiApi: ShopApi.CustomersApi;
 
-  constructor(config: ShopApi.ApiConfig) {
-    this.config = config;
-    this.api = new ShopApi.CustomersApi();
+  constructor(capiConfig: ClientConfig, ocapiConfig: ShopApi.ApiConfig) {
+    this.capiConfig = capiConfig;
+    this.ocapiConfig = ocapiConfig;
+    this.capiApi = new Customer.ShopperCustomers(capiConfig);
+    this.ocapiApi = new ShopApi.CustomersApi();
   }
 
-  protected getCustomerId(registeredOnly?: boolean) {
-    return getCustomerIdFromToken(this.config.oauth2AccessToken, registeredOnly);
+  protected async capiGuestSignIn(): Promise<string> {
+    const response: Response = await this.capiApi.authorizeCustomer<true>({
+      body: {
+        type: ShopApi.AuthRequest.TypeEnum.guest
+      }
+    }, true);
+
+    return getTokenFromAuthHeader(response.headers.get('authorization'));
   }
 
-  async guestSignIn(): Promise<string> {
-    const result = await this.api.postCustomersAuthWithHttpInfo({
+  protected async capiRefreshToken(): Promise<string> {
+    const response: Response = await this.capiApi.authorizeCustomer<true>({
+      body: {
+        type: ShopApi.AuthRequest.TypeEnum.refresh
+      }
+    }, true);
+
+    return getTokenFromAuthHeader(response.headers.get('authorization'));
+  }
+
+  protected async capiSignIn(username: string, password: string): Promise<{ customer: ApiCustomer, token: string }> {
+    const authStr = `${username}:${password}`;
+    const encodedAuthStr = Buffer.from(authStr).toString('base64');
+
+    const response: Response = await this.capiApi.authorizeCustomer<true>({
+      body: {
+        type: ShopApi.AuthRequest.TypeEnum.credentials
+      },
+      headers: {
+        authorization: `Basic ${encodedAuthStr}`
+      }
+    }, true);
+
+    const customer = getObjectFromResponse(response);
+    const token = getTokenFromAuthHeader(response.headers.get('authorization'));
+
+    return { customer, token };
+  }
+
+  protected async ocapiGuestSignIn(): Promise<string> {
+    const result = await this.ocapiApi.postCustomersAuthWithHttpInfo({
       type: ShopApi.AuthRequest.TypeEnum.guest
     });
 
     return getTokenFromAuthHeader(result.response.headers.authorization);
   }
 
-  async refreshToken(): Promise<string> {
-    const result = await this.api.postCustomersAuthWithHttpInfo({
+  protected async ocapiRefreshToken(): Promise<string> {
+    const result = await this.ocapiApi.postCustomersAuthWithHttpInfo({
       type: ShopApi.AuthRequest.TypeEnum.refresh
     }, {
-      authorization: `Bearer ${this.config.oauth2AccessToken}`
+      authorization: `Bearer ${this.ocapiConfig.oauth2AccessToken}`
     });
 
     return getTokenFromAuthHeader(result.response.headers.authorization);
   }
 
-  async signIn(username: string, password: string): Promise<{ customer: ApiCustomer, token: string }> {
+  protected async ocapiSignIn(username: string, password: string): Promise<{ customer: ApiCustomer, token: string }> {
     const authStr = `${username}:${password}`;
     const encodedAuthStr = Buffer.from(authStr).toString('base64');
 
-    const result = await this.api.postCustomersAuthWithHttpInfo(
+    const result = await this.ocapiApi.postCustomersAuthWithHttpInfo(
       { type: ShopApi.AuthRequest.TypeEnum.credentials },
       { authorization: `Basic ${encodedAuthStr}` }
     );
@@ -60,6 +98,54 @@ export class OcapiCustomersApi implements CustomersApi {
     const token = getTokenFromAuthHeader(result.response.headers.authorization);
 
     return { customer, token };
+  }
+
+  async guestSignIn(): Promise<TokensResponse> {
+    const capiToken = await this.capiGuestSignIn();
+    const ocapiToken = await this.ocapiGuestSignIn();
+
+    return {
+      capiToken,
+      ocapiToken
+    };
+  }
+
+  async refreshToken(): Promise<TokensResponse> {
+    const capiToken = await this.capiRefreshToken();
+    const ocapiToken = await this.ocapiRefreshToken();
+
+    return {
+      capiToken,
+      ocapiToken
+    };
+  }
+
+  async signIn(username: string, password: string): Promise<{ customer: ApiCustomer } & TokensResponse> {
+    const { customer, token: capiToken } = await this.capiSignIn(username, password);
+    const { token: ocapiToken } = await this.ocapiSignIn(username, password);
+
+    return {
+      customer,
+      capiToken,
+      ocapiToken
+    };
+  }
+}
+
+export class OcapiCustomersApi extends BaseCustomersApi implements CustomersApi {
+  protected config: ShopApi.ApiConfig;
+  protected api: ShopApi.CustomersApi;
+  protected customerId: string;
+
+  constructor(capiConfig: ClientConfig, ocapiConfig: ShopApi.ApiConfig) {
+    super(capiConfig, ocapiConfig);
+
+    this.api = this.ocapiApi;
+    this.config = this.ocapiConfig;
+  }
+
+  protected getCustomerId(registeredOnly?: boolean): string {
+    return getCustomerIdFromToken(this.config.oauth2AccessToken, registeredOnly);
   }
 
   async getCustomer(): Promise<ApiCustomer> {
@@ -192,60 +278,23 @@ export class OcapiCustomersApi implements CustomersApi {
   }
 }
 
-export class CapiCustomersApi implements CustomersApi {
+export class CapiCustomersApi extends BaseCustomersApi implements CustomersApi {
   protected config: ClientConfig;
   protected api: Customer.ShopperCustomers;
   protected customerId: string;
 
-  constructor(config: ClientConfig) {
-    this.config = config;
-    this.api = new Customer.ShopperCustomers(config);
+  constructor(capiConfig: ClientConfig, ocapiConfig: ShopApi.ApiConfig) {
+    super(capiConfig, ocapiConfig);
+
+    this.config = this.capiConfig;
+    this.api = this.capiApi;
   }
 
-  protected getCustomerId(registeredOnly?: boolean) {
+  protected getCustomerId(registeredOnly?: boolean): string {
     const token = getTokenFromAuthHeader(this.config.headers.authorization);
     const customerId = token && getCustomerIdFromToken(token, registeredOnly);
 
     return customerId;
-  }
-
-  async guestSignIn(): Promise<string> {
-    const response: Response = await this.api.authorizeCustomer<true>({
-      body: {
-        type: ShopApi.AuthRequest.TypeEnum.guest
-      }
-    }, true);
-
-    return getTokenFromAuthHeader(response.headers.get('authorization'));
-  }
-
-  async refreshToken(): Promise<string> {
-    const response: Response = await this.api.authorizeCustomer<true>({
-      body: {
-        type: ShopApi.AuthRequest.TypeEnum.refresh
-      }
-    }, true);
-
-    return getTokenFromAuthHeader(response.headers.get('authorization'));
-  }
-
-  async signIn(username: string, password: string): Promise<{ customer: ApiCustomer, token: string }> {
-    const authStr = `${username}:${password}`;
-    const encodedAuthStr = Buffer.from(authStr).toString('base64');
-
-    const response: Response = await this.api.authorizeCustomer<true>({
-      body: {
-        type: ShopApi.AuthRequest.TypeEnum.credentials
-      },
-      headers: {
-        authorization: `Basic ${encodedAuthStr}`
-      }
-    }, true);
-
-    const customer = getObjectFromResponse(response);
-    const token = getTokenFromAuthHeader(response.headers.get('authorization'));
-
-    return { customer, token };
   }
 
   async getCustomer(): Promise<ApiCustomer> {

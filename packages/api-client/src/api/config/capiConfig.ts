@@ -6,15 +6,15 @@ export function buildConfig(apiConfig: ApiClientSettings): ClientConfig {
     headers: {},
     parameters: {
       siteId: apiConfig.siteId,
-      clientId: apiConfig.clientId,
+      clientId: apiConfig.capiClientId,
       shortCode: apiConfig.shortCode,
       organizationId: apiConfig.organizationId,
       version: apiConfig.commerceApiVersion
     }
   };
 
-  if (apiConfig.jwtToken) {
-    clientConfig.headers.authorization = `Bearer ${apiConfig.jwtToken}`;
+  if (apiConfig.capiJwtToken) {
+    clientConfig.headers.authorization = `Bearer ${apiConfig.capiJwtToken}`;
   }
 
   if (!apiConfig.cache) {

@@ -1,7 +1,6 @@
-/* eslint-disable no-use-before-define */
+/* eslint-disable no-use-before-define, camelcase */
 
 import { AxiosInstance } from 'axios';
-import { CookieOptions } from 'express';
 import { ApiInstance, IntegrationContext } from '@vue-storefront/core';
 import * as Apis from './api/clients/interfaces';
 import {
@@ -134,10 +133,13 @@ export type SfccSetupConfig = IntegrationContext<ApiClients, ApiClientSettings>;
 
 export type SfccIntegrationContext = IntegrationContext<ApiClients, ApiClientSettings, ContextualizedEndpoints>;
 
-export type Endpoints = {
+export type AuthEndpoints = {
   guestSignIn(context: SfccIntegrationContext): Promise<void>;
   refreshToken(context: SfccIntegrationContext): Promise<void>;
   signIn(context: SfccIntegrationContext, username: string, password: string): Promise<Customer>;
+};
+
+export type ApiSelectableEndpoints = {
   getCustomer(context: SfccIntegrationContext): Promise<Customer>;
   getCustomerAddresses(context: SfccIntegrationContext): Promise<CustomerAddress[]>;
   createCustomerAddress(context: SfccIntegrationContext, address: CustomerAddress): Promise<CustomerAddress>;
@@ -171,38 +173,46 @@ export type Endpoints = {
   getCustomerOrders(context: SfccIntegrationContext, params: OrderSearchParams): Promise<Order[]>;
 };
 
+export type Endpoints = AuthEndpoints & ApiSelectableEndpoints;
+
 export type ContextualizedEndpoints = {
   [T in keyof Endpoints]: Endpoints[T] extends (x: any, ...args: infer P) => infer R ? (...args: P) => R : never;
 };
 
 export interface ApiClientSettings {
   origin: string;
-  clientId?: string;
+  capiClientId?: string;
+  ocapiClientId?: string;
   siteId: string;
   ocapiVersion: string;
   commerceApiVersion?: string;
   shortCode?: string;
   organizationId?: string;
-  enableCommerceApi?: boolean;
   locale?: string;
-  jwtToken?: string;
+  capiJwtToken?: string;
+  ocapiJwtToken?: string;
   cache?: boolean;
   timeout?: number;
   viewType?: string;
   enableCookies?: boolean;
   overrideHttpPut?: boolean;
   defaultHeaders?: Record<string, string>;
+  ocapiEndpoints?: {
+    [T in keyof ApiSelectableEndpoints]?: boolean;
+  },
   cookieNames?: {
-    authToken?: string;
+    capiAuthToken?: string;
+    ocapiAuthToken?: string;
   },
   clientHeaders: {
-    authToken?: string;
+    capiAuthToken?: string;
+    ocapiAuthToken?: string;
     locale?: string;
   },
   callbacks?: {
     auth?: {
       onSessionTimeout?: (isGuest: boolean) => void;
-      onTokenChange?: (token: string) => void;
+      onTokenChange?: (newCapiToken: string, newOcapiToken: string) => void;
     };
   };
   overrides?: Partial<Endpoints>;

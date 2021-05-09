@@ -5,10 +5,10 @@ export default async function signIn(context: SfccIntegrationContext, username: 
     return context.config.overrides.signIn(context, username, password);
   }
 
-  const { customer, token } = await context.client.CustomersApi.signIn(username, password);
+  const { customer, capiToken, ocapiToken } = await context.client.CustomersApi.signIn(username, password);
 
-  if (token && context.config.callbacks && context.config.callbacks.auth && context.config.callbacks.auth.onTokenChange) {
-    context.config.callbacks.auth.onTokenChange(token);
+  if ((capiToken || ocapiToken) && context.config.callbacks && context.config.callbacks.auth && context.config.callbacks.auth.onTokenChange) {
+    context.config.callbacks.auth.onTokenChange(capiToken, ocapiToken);
   }
 
   return customer;

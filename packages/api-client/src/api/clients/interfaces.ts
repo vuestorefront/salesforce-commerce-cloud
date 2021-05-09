@@ -17,10 +17,15 @@ import {
 
 import { Checkout } from 'commerce-sdk';
 
+export type TokensResponse = {
+  capiToken?: string;
+  ocapiToken?: string;
+}
+
 export interface CustomersApi {
-  guestSignIn(): Promise<string>;
-  refreshToken(): Promise<string>;
-  signIn(username: string, password: string): Promise<{ customer: Customer, token: string }>;
+  guestSignIn(): Promise<TokensResponse>;
+  refreshToken(): Promise<TokensResponse>;
+  signIn(username: string, password: string): Promise<{ customer: Customer } & TokensResponse>;
   getCustomer(): Promise<Customer>;
   getAddresses(): Promise<CustomerAddress[]>;
   createAddress(address: CustomerAddress): Promise<CustomerAddress>;
