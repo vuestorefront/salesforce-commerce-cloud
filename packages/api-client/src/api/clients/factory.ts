@@ -11,7 +11,19 @@ export function createClientProxy<T>(
         return ocapiClient[prop].bind(ocapiClient);
       }
 
-      return capiClient[prop].bind(capiClient);
+      return async function capiMethodWrapper (...args: any[]) {
+        try {
+          return await capiClient[prop].call(capiClient, ...args);
+        } catch (e) {
+          // Throw the actual response body instead of the SDK wrapper
+          // and prevent Axios from overwriting it in the Error's 'response' property
+          if (e.response && e.response.text) {
+            throw (await e.response.text());
+          }
+
+          throw e;
+        }
+      };
     }
   }) as T;
 }
