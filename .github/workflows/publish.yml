@@ -1,0 +1,76 @@
+name: Publish Packages on NPM
+on:
+  push:
+    branches:
+      - release
+jobs:
+  publishing:
+    name: Package Publishing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+          registry-url: "https://registry.npmjs.org/"
+          scope: "@vue-storefront"
+
+      - name: Cache node_modules
+        id: node-cache
+        uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        if: steps.node-cache.outputs.cache-hit != 'true'
+        run: yarn
+
+      - name: Increment beta version
+        run: yarn release:bump-version
+
+      - name: Push incremented version
+        uses: ppavlov-dw/push@v1.2.1
+        with:
+          repository: 'vuestorefront/salesforce-commerce-cloud'
+          branch: 'release'
+          github_token: ${{ secrets.REPO_TOKEN }}
+          message: 'v${{ env.BETA_VERSION }} [skip ci]'
+
+      - name: Publish to NPM
+        run: |
+          echo "" >> .npmrc && echo "@vue-storefront:registry=https://registry.npmjs.org/" >> .npmrc
+          yarn build:api-client
+          yarn build:composables
+          yarn release:publish "${{ secrets.NPM_TOKEN }}"
+
+      - name: Checkout template repo
+        uses: actions/checkout@v2
+        with:
+          repository: 'ppavlov-dw/vsf-sfcc-template-publish-test'
+          token: ${{ secrets.TEMPLATE_TOKEN }}
+          path: './template'
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Update template
+        run: |
+          mv ./template/.git ${{ runner.temp }}/.vsf-tmpl-git
+          yarn release:template
+          mv ${{ runner.temp }}/.vsf-tmpl-git ./template/.git
+
+      - name: Push updated template
+        uses: ppavlov-dw/push@v1.2.1
+        with:
+          repository: 'ForkPoint/vsf-sfcc-template'
+          github_token: ${{ secrets.TEMPLATE_TOKEN }}
+          message: 'v${{ env.BETA_VERSION }}'
+          directory: './template'
