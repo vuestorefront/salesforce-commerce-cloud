@@ -1,4 +1,5 @@
 import {
+  SiteConfig,
   Cart,
   Order,
   LineItem,
@@ -20,6 +21,10 @@ import { Checkout } from 'commerce-sdk';
 export type TokensResponse = {
   capiToken?: string;
   ocapiToken?: string;
+}
+
+export interface SiteApi {
+  getConfig(): Promise<SiteConfig>;
 }
 
 export interface CustomersApi {

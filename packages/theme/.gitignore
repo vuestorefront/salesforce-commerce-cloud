@@ -92,4 +92,7 @@ sw.*
 # Vim swap files
 *.swp
 
+# Generated configs
+/config/*.json
+
 version

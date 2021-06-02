@@ -8,6 +8,8 @@ import { ApiClientSettings, Endpoints, SfccSetupConfig } from './types';
 import api from './api/endpoints';
 import extensions from './api/extensions';
 
+const { getSiteConfig } = api;
+
 const onCreate = (config: ApiClientSettings): SfccSetupConfig => {
   const ocapiClient = new ShopApi.ApiClient(buildOcapiConfig(config));
 
@@ -27,6 +29,7 @@ const { createApiClient } = apiClientFactory<ApiClientSettings, Endpoints>({
 });
 
 export {
+  getSiteConfig,
   createApiClient
 };
 

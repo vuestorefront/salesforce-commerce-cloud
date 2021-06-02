@@ -31,7 +31,17 @@ function loggerPlugin() {
   }
 }
 
-export default function sfccPlugin() {
+function localesPlugin(moduleOptions) {
+  if (moduleOptions.useSiteLocales) {
+    this.addPlugin({
+      src: path.resolve(__dirname, './locales.js'),
+      options: {}
+    });
+  }
+}
+
+export default function sfccPlugin(moduleOptions) {
   integrationPlugin.call(this);
   loggerPlugin.call(this);
+  localesPlugin.call(this, moduleOptions);
 }

@@ -10,6 +10,24 @@ import {
   Customer as SdkCustomer
 } from 'commerce-sdk';
 
+export type Locale = {
+  country: string;
+  default: boolean;
+  displayCountry: string;
+  displayLanguage: string;
+  displayName: string;
+  id: string;
+  iso3Country: string;
+  iso3Language: string;
+  language: string;
+  name: string;
+};
+
+export type SiteConfig = {
+  defaultLocale: string;
+  allowedLocales: Locale[];
+};
+
 export type Customer = SdkCustomer.ShopperCustomers.Customer & {
   birthday?: Date;
   creationDate?: Date;
@@ -120,6 +138,7 @@ export type OrderSearchParams = {
 };
 
 export type ApiClients = {
+  SiteApi: Apis.SiteApi,
   CustomersApi: Apis.CustomersApi,
   CategoriesApi: Apis.CategoriesApi,
   ProductsApi: Apis.ProductsApi,
@@ -140,6 +159,7 @@ export type AuthEndpoints = {
 };
 
 export type ApiSelectableEndpoints = {
+  getSiteConfig(context: SfccIntegrationContext): Promise<SiteConfig>;
   getCustomer(context: SfccIntegrationContext): Promise<Customer>;
   getCustomerAddresses(context: SfccIntegrationContext): Promise<CustomerAddress[]>;
   createCustomerAddress(context: SfccIntegrationContext, address: CustomerAddress): Promise<CustomerAddress>;

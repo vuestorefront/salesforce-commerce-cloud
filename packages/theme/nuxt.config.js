@@ -1,4 +1,5 @@
 import webpack from 'webpack';
+import i18n from './config/i18n';
 
 export default {
   mode: 'universal',
@@ -71,7 +72,9 @@ export default {
     /* project-only-start
     ['@vue-storefront/nuxt-theme'],
     project-only-end */
-    ['@vue-storefront/sfcc/nuxt']
+    ['@vue-storefront/sfcc/nuxt', {
+      useSiteLocales: true
+    }]
   ],
   modules: [
     'nuxt-i18n',
@@ -79,24 +82,7 @@ export default {
     'vue-scrollto/nuxt',
     '@vue-storefront/middleware/nuxt'
   ],
-  i18n: {
-    locales: [
-      { code: 'en' },
-      { code: 'de' }
-    ],
-    defaultLocale: 'en',
-    vueI18n: {
-      fallbackLocale: 'en',
-      messages: {
-        en: {
-          welcome: 'Welcome 1'
-        },
-        de: {
-          welcome: 'Welcome 2'
-        }
-      }
-    }
-  },
+  i18n,
   styleResources: {
     scss: [require.resolve('@storefront-ui/shared/styles/_helpers.scss', { paths: [process.cwd()] })]
   },
