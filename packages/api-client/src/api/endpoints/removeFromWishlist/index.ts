@@ -5,5 +5,5 @@ export default async function removeFromWishlist(context: SfccIntegrationContext
     return context.config.overrides.removeFromWishlist(context, listId, itemId);
   }
 
-  return context.client.WishlistsApi.removeFromWishlist(listId, itemId);
+  return context.client.WishlistsApi.removeFromWishlist(context, listId, itemId);
 }

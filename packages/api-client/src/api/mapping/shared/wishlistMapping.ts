@@ -1,5 +1,4 @@
 import { Customer } from 'commerce-sdk';
-import { useVSFContext } from '@vue-storefront/core';
 
 import { getProducts } from '../../endpoints/getProduct';
 import { SfccIntegrationContext, Product, Wishlist, WishlistItem } from '../../../types';
@@ -13,15 +12,13 @@ const mapWishlistItem = async (context: SfccIntegrationContext, item: Customer.S
   };
 };
 
-export const mapWishlist = async (wishlist: Customer.ShopperCustomers.CustomerProductList): Promise<Wishlist> => {
-  const context: { $vsf: SfccIntegrationContext } = useVSFContext() as { $vsf: SfccIntegrationContext };
-
+export const mapWishlist = async (context: SfccIntegrationContext, wishlist: Customer.ShopperCustomers.CustomerProductList): Promise<Wishlist> => {
   const items = wishlist.customerProductListItems || [];
   const productIds = items.map((item) => item.productId);
-  const products = (productIds.length && await getProducts(context.$vsf.$sfcc, productIds)) || [];
+  const products = (productIds.length && await getProducts(context, productIds)) || [];
 
   const productsMap = products.reduce((map, product) => ({ ...map, [product._id]: product }), {});
-  const wishlistItemsBuilds = items.map((item) => mapWishlistItem(context.$vsf.$sfcc, item, productsMap));
+  const wishlistItemsBuilds = items.map((item) => mapWishlistItem(context, item, productsMap));
 
   return {
     ...wishlist,

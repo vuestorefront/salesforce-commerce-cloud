@@ -17,10 +17,15 @@ import {
 
 import { Checkout } from 'commerce-sdk';
 
+export type TokensResponse = {
+  capiToken?: string;
+  ocapiToken?: string;
+}
+
 export interface CustomersApi {
-  guestSignIn(): Promise<string>;
-  refreshToken(): Promise<string>;
-  signIn(username: string, password: string): Promise<{ customer: Customer, token: string }>;
+  guestSignIn(): Promise<TokensResponse>;
+  refreshToken(): Promise<TokensResponse>;
+  signIn(username: string, password: string): Promise<{ customer: Customer } & TokensResponse>;
   getCustomer(): Promise<Customer>;
   getAddresses(): Promise<CustomerAddress[]>;
   createAddress(address: CustomerAddress): Promise<CustomerAddress>;
@@ -47,10 +52,10 @@ export interface ProductsApi {
 }
 
 export interface WishlistsApi {
-  getWishlist(): Promise<Wishlist>;
-  createWishlist(): Promise<Wishlist>;
-  addToWishlist(listId: string, productId: string): Promise<Wishlist>;
-  removeFromWishlist(listId: string, itemId: string): Promise<Wishlist>;
+  getWishlist(context: SfccIntegrationContext): Promise<Wishlist>;
+  createWishlist(context: SfccIntegrationContext): Promise<Wishlist>;
+  addToWishlist(context: SfccIntegrationContext, listId: string, productId: string): Promise<Wishlist>;
+  removeFromWishlist(context: SfccIntegrationContext, listId: string, itemId: string): Promise<Wishlist>;
 }
 
 export interface CartsApi {

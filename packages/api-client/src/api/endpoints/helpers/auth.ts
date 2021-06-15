@@ -1,5 +1,6 @@
 import { decode } from 'js-base64';
 import { SfccIntegrationContext } from '../../../types';
+import { TokensResponse } from '../../clients/interfaces';
 
 type JwtPayload = {
   sub: string;
@@ -7,7 +8,11 @@ type JwtPayload = {
 };
 
 type JwtSubject = {
+  // eslint-disable-next-line camelcase
   customer_info?: {
+    guest?: boolean;
+  },
+  CustomerInfo?: {
     guest?: boolean;
   }
 };
@@ -24,44 +29,59 @@ const getJwtTokenState = (token: string) => {
     const subject: JwtSubject = JSON.parse(payload.sub) as JwtSubject;
 
     const expiryTime = payload.exp * 1000;
-    const isGuest = !subject || !subject.customer_info || subject.customer_info.guest;
+    const customerInfo = subject && (subject.customer_info || subject.CustomerInfo);
+    const isGuest = !customerInfo || customerInfo.guest;
 
-    return { expiryTime, isGuest };
+    const now = new Date().getTime();
+    const afterAboutToExpireWindow = now + (1 * 60 * 1000);
+
+    const isExpired = expiryTime < now;
+    const isAboutToExpire = !isExpired && expiryTime < afterAboutToExpireWindow;
+
+    return { isGuest, isExpired, isAboutToExpire };
   }
 
   return {};
 };
 
-const handleTokenExpiry = async (context: SfccIntegrationContext): Promise<string> => {
-  const token = context.config.jwtToken;
+const handleTokenExpiry = async (context: SfccIntegrationContext): Promise<TokensResponse> => {
+  const capiToken = context.config.capiJwtToken;
+  const ocapiToken = context.config.ocapiJwtToken;
 
-  if (!token) {
+  if (!capiToken || !ocapiToken) {
     return await context.client.CustomersApi.guestSignIn();
   }
 
-  const { expiryTime, isGuest } = getJwtTokenState(token);
+  const {
+    isGuest: capiIsGuest,
+    isExpired: capiIsExpired,
+    isAboutToExpire: capiIsAboutToExpire
+  } = getJwtTokenState(capiToken);
 
-  const now = new Date().getTime();
-  const afterAboutToExpireWindow = now + (1 * 60 * 1000);
+  const {
+    isGuest: ocapiIsGuest,
+    isExpired: ocapiIsExpired,
+    isAboutToExpire: ocapiIsAboutToExpire
+  } = getJwtTokenState(ocapiToken);
 
-  const expired = expiryTime < now;
-  const isAboutToExpire = !expired && expiryTime < afterAboutToExpireWindow;
-
-  if (isAboutToExpire) {
+  if (capiIsAboutToExpire || ocapiIsAboutToExpire) {
     return await context.client.CustomersApi.refreshToken();
   }
 
-  if (expired) {
-    const token = await context.client.CustomersApi.guestSignIn();
+  if (capiIsExpired || ocapiIsExpired) {
+    const tokens = await context.client.CustomersApi.guestSignIn();
 
     if (context.config.callbacks.auth.onSessionTimeout) {
-      context.config.callbacks.auth.onSessionTimeout(isGuest);
+      context.config.callbacks.auth.onSessionTimeout(capiIsGuest || ocapiIsGuest);
     }
 
-    return token;
+    return tokens;
   }
 
-  return token;
+  return {
+    capiToken,
+    ocapiToken
+  };
 };
 
 type Endpoint = (...args: any) => Promise<any>
@@ -70,20 +90,19 @@ export function wrapAuthHandler<T extends Record<keyof T, Endpoint>>(endpoints: 
   return Object.keys(endpoints).reduce((acc, callName) => ({
     ...acc,
     [callName]: new Proxy(endpoints[callName], {
-      apply: async function (target, thisArg, args) {
+      apply: async function apply(target, thisArg, args) {
         const context: SfccIntegrationContext = args[0];
-        const currentToken = context.config.jwtToken;
 
         if (!unauthenticatedModules.includes(callName)) {
-          const newToken = await handleTokenExpiry(context);
+          const { capiToken, ocapiToken } = await handleTokenExpiry(context);
 
-          if (newToken !== currentToken) {
-            context.config.callbacks.auth.onTokenChange(newToken);
+          if (capiToken !== context.config.capiJwtToken || ocapiToken !== context.config.ocapiJwtToken) {
+            context.config.callbacks.auth.onTokenChange(capiToken, ocapiToken);
           }
         }
 
         return await target.apply(thisArg, [context, ...args.slice(1)]);
       }
-    }),
+    })
   }), {});
 }

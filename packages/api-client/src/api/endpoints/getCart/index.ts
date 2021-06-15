@@ -7,16 +7,12 @@ export default async function getCart(context: SfccIntegrationContext): Promise<
     return context.config.overrides.getCart(context);
   }
 
-  const token = context.config.jwtToken;
+  try {
+    const carts = await context.client.CustomersApi.getCarts(context);
 
-  if (token) {
-    try {
-      const carts = await context.client.CustomersApi.getCarts(context);
-
-      cart = carts[0];
-    } catch (e) {
-      // TODO Handle
-    }
+    cart = carts[0];
+  } catch (e) {
+    // TODO Handle
   }
 
   if (!cart) {

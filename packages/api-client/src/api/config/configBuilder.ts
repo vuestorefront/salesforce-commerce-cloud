@@ -1,5 +1,6 @@
 import { buildConfig as buildCapiConfig } from './capiConfig';
 import { buildConfig as buildOcapiConfig } from './ocapiConfig';
+import { createClientProxy } from '../clients/factory';
 import { CapiCartsApi, OcapiCartsApi } from '../clients/carts';
 import { CapiOrdersApi, OcapiOrdersApi } from '../clients/orders';
 import { CapiCustomersApi, OcapiCustomersApi } from '../clients/customers';
@@ -8,30 +9,61 @@ import { CapiProductsApi, OcapiProductsApi } from '../clients/products';
 import { CapiWishlistsApi, OcapiWishlistsApi } from '../clients/wishlists';
 import { CapiProductSearchApi, OcapiProductSearchApi } from '../clients/productSearch';
 import { ApiClients, ApiClientSettings } from '../../types';
+import {
+  CartsApi,
+  OrdersApi,
+  CustomersApi,
+  CategoriesApi,
+  ProductsApi,
+  WishlistsApi,
+  ProductSearchApi
+} from '../clients/interfaces';
 
 export const buildClientConfig = (settings: ApiClientSettings): ApiClients => {
   const capiConfig = buildCapiConfig(settings);
   const ocapiConfig = buildOcapiConfig(settings);
 
-  const clients: Partial<ApiClients> = {};
+  return {
+    CartsApi: createClientProxy<CartsApi>(
+      settings,
+      new CapiCartsApi(capiConfig),
+      new OcapiCartsApi(ocapiConfig)
+    ),
 
-  if (settings.enableCommerceApi) {
-    clients.CartsApi = new CapiCartsApi(capiConfig);
-    clients.OrdersApi = new CapiOrdersApi(capiConfig);
-    clients.CustomersApi = new CapiCustomersApi(capiConfig);
-    clients.ProductsApi = new CapiProductsApi(capiConfig);
-    clients.WishlistsApi = new CapiWishlistsApi(capiConfig);
-    clients.CategoriesApi = new CapiCategoriesApi(capiConfig);
-    clients.ProductSearchApi = new CapiProductSearchApi(capiConfig);
-  } else {
-    clients.CartsApi = new OcapiCartsApi(ocapiConfig);
-    clients.OrdersApi = new OcapiOrdersApi(ocapiConfig);
-    clients.CustomersApi = new OcapiCustomersApi(ocapiConfig);
-    clients.ProductsApi = new OcapiProductsApi(ocapiConfig);
-    clients.WishlistsApi = new OcapiWishlistsApi(ocapiConfig);
-    clients.CategoriesApi = new OcapiCategoriesApi(ocapiConfig);
-    clients.ProductSearchApi = new OcapiProductSearchApi(ocapiConfig);
-  }
+    OrdersApi: createClientProxy<OrdersApi>(
+      settings,
+      new CapiOrdersApi(capiConfig),
+      new OcapiOrdersApi(ocapiConfig)
+    ),
 
-  return clients as ApiClients;
+    CustomersApi: createClientProxy<CustomersApi>(
+      settings,
+      new CapiCustomersApi(capiConfig, ocapiConfig),
+      new OcapiCustomersApi(capiConfig, ocapiConfig)
+    ),
+
+    ProductsApi: createClientProxy<ProductsApi>(
+      settings,
+      new CapiProductsApi(capiConfig),
+      new OcapiProductsApi(ocapiConfig)
+    ),
+
+    WishlistsApi: createClientProxy<WishlistsApi>(
+      settings,
+      new CapiWishlistsApi(capiConfig),
+      new OcapiWishlistsApi(ocapiConfig)
+    ),
+
+    CategoriesApi: createClientProxy<CategoriesApi>(
+      settings,
+      new CapiCategoriesApi(capiConfig),
+      new OcapiCategoriesApi(ocapiConfig)
+    ),
+
+    ProductSearchApi: createClientProxy<ProductSearchApi>(
+      settings,
+      new CapiProductSearchApi(capiConfig),
+      new OcapiProductSearchApi(ocapiConfig)
+    )
+  };
 };

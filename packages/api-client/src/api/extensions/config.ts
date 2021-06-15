@@ -28,30 +28,53 @@ export default {
     beforeCreate: ({ configuration }: { configuration: ApiClientSettings }) => {
       configuration.callbacks = configuration.callbacks || {};
       configuration.callbacks.auth = configuration.callbacks.auth || {};
+      configuration.ocapiEndpoints = configuration.ocapiEndpoints || {};
       configuration.locale = req.headers[configuration.clientHeaders.locale] as string;
 
-      Object.defineProperty(configuration, 'jwtToken', {
+      Object.defineProperty(configuration, 'capiJwtToken', {
         enumerable: true,
         configurable: true,
         get() {
+          const headerName = configuration.clientHeaders.capiAuthToken;
+          const cookieName = configuration.cookieNames.capiAuthToken;
+
+          return req.headers[headerName] || req.cookies[cookieName];
+        },
+        set(newToken: string) {
+          res.set(configuration.clientHeaders.capiAuthToken, newToken);
+        }
+      });
+
+      Object.defineProperty(configuration, 'ocapiJwtToken', {
+        enumerable: true,
+        configurable: true,
+        get() {
+          const headerName = configuration.clientHeaders.ocapiAuthToken;
+          const cookieName = configuration.cookieNames.ocapiAuthToken;
+
           return updateTokenIssuer(
-            req.headers[configuration.clientHeaders.authToken] ||
-            req.cookies[configuration.cookieNames.authToken],
+            req.headers[headerName] || req.cookies[cookieName],
             null,
-            configuration.clientId
+            configuration.ocapiClientId
           );
         },
         set(newToken: string) {
           res.set(
-            configuration.clientHeaders.authToken,
-            updateTokenIssuer(newToken, configuration.clientId, null)
+            configuration.clientHeaders.ocapiAuthToken,
+            updateTokenIssuer(newToken, configuration.ocapiClientId, null)
           );
         }
       });
 
       if (!configuration.callbacks.auth.onTokenChange) {
-        configuration.callbacks.auth.onTokenChange = (newToken: string) => {
-          configuration.jwtToken = newToken;
+        configuration.callbacks.auth.onTokenChange = (newCapiToken: string, newOcapiToken) => {
+          if (newCapiToken) {
+            configuration.capiJwtToken = newCapiToken;
+          }
+
+          if (newOcapiToken) {
+            configuration.ocapiJwtToken = newOcapiToken;
+          }
         };
       }
 
