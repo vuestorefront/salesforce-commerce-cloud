@@ -16,7 +16,7 @@
     "@types/set-cookie-parser": "^2.4.0"
   },
   "dependencies": {
-    "@vue-storefront/core": "^2.3.0-rc.3",
+    "@vue-storefront/core": "^2.3.4",
     "@vue-storefront/sfcc-api": "^1.0.0-beta.7",
     "set-cookie-parser": "^2.4.7"
   },
