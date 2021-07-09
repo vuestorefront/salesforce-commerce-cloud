@@ -5,5 +5,5 @@ export default async function searchProducts(context: SfccIntegrationContext, pa
     return context.config.overrides.searchProducts(context, params);
   }
 
-  return await context.client.ProductSearchApi.searchProducts(params, context.config.locale);
+  return await context.client.ProductSearchApi.searchProducts(params, context.config.locale, context.config.currency);
 }

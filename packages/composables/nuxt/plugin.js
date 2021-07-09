@@ -1,5 +1,5 @@
 import setCookie from 'set-cookie-parser';
-import { integrationPlugin } from '@vue-storefront/core';
+import { integrationPlugin, VSF_LOCALE_COOKIE, VSF_CURRENCY_COOKIE } from '@vue-storefront/core';
 
 const moduleOptions = JSON.parse('<%= JSON.stringify(options) %>');
 
@@ -8,13 +8,15 @@ const getAxiosConfig = ({ app, integration, req }) => {
   const ocapiAuthCookie = moduleOptions.cookieNames.ocapiAuthToken;
   const capiAuthHeader = moduleOptions.clientHeaders.capiAuthToken;
   const ocapiAuthHeader = moduleOptions.clientHeaders.ocapiAuthToken;
-  const localeHeader = moduleOptions.clientHeaders.locale
+  const currencyHeader = moduleOptions.clientHeaders.currency;
+  const localeHeader = moduleOptions.clientHeaders.locale;
 
   return {
     headers: {
       [capiAuthHeader]: app.$cookies.get(capiAuthCookie) || '',
       [ocapiAuthHeader]: app.$cookies.get(ocapiAuthCookie) || '',
-      [localeHeader]: app.i18n.locale,
+      [currencyHeader]: app.$cookies.get(VSF_CURRENCY_COOKIE),
+      [localeHeader]: app.i18n.locale || app.$cookies.get(VSF_LOCALE_COOKIE)
     },
     transformResponse: [
       (data, headers) => {

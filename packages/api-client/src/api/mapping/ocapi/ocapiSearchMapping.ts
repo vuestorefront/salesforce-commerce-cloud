@@ -23,8 +23,8 @@ export const mapOcapiSearchResponse = (apiResponse: ProductSearchResult): Produc
   mapOcapiSearchResultToGenericSearchResult(apiResponse)
 );
 
-export const buildOcapiSearchOptions = (params: ProductSearchParams, locale?: string): ProductSearchOptions => {
-  const genericOptions = buildSearchOptions(params, locale);
+export const buildOcapiSearchOptions = (params: ProductSearchParams, locale?: string, currency?: string): ProductSearchOptions => {
+  const genericOptions = buildSearchOptions(params, locale, currency);
 
   return {
     ...genericOptions,

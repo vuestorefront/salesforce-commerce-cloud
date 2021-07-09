@@ -75,6 +75,7 @@ module.exports = {
         clientHeaders: {
           capiAuthToken: process.env.SFCC_CLIENT_HEADERS_CAPI_TOKEN || 'x-vsf-sfcc-capi-token',
           ocapiAuthToken: process.env.SFCC_CLIENT_HEADERS_OCAPI_TOKEN || 'x-vsf-sfcc-ocapi-token',
+          currency: process.env.SFCC_CLIENT_HEADERS_CURRENCY || 'x-vsf-sfcc-currency',
           locale: process.env.SFCC_CLIENT_HEADERS_LOCALE || 'x-vsf-sfcc-locale'
         }
       }
@@ -99,4 +100,5 @@ module.exports = {
 - `clientHeaders`
   - `capiAuthToken` - The name of the HTTP header in which the client will send the current JWT token for CAPI to the API
   - `ocapiAuthToken` - The name of the HTTP header in which the client will send the current JWT token for OCAPI to the API
+  - `currency` - The name of the HTTP header in which the client will send the currently selected currency's code to the API
   - `locale` - The name of the HTTP header in which the client will send the current locale to the API

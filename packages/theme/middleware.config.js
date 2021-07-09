@@ -21,6 +21,7 @@ module.exports = {
         clientHeaders: {
           capiAuthToken: process.env.SFCC_CLIENT_HEADERS_CAPI_TOKEN || 'x-vsf-sfcc-capi-token',
           ocapiAuthToken: process.env.SFCC_CLIENT_HEADERS_OCAPI_TOKEN || 'x-vsf-sfcc-ocapi-token',
+          currency: process.env.SFCC_CLIENT_HEADERS_CURRENCY || 'x-vsf-sfcc-currency',
           locale: process.env.SFCC_CLIENT_HEADERS_LOCALE || 'x-vsf-sfcc-locale'
         }
       }

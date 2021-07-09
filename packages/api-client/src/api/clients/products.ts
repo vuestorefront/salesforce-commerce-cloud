@@ -15,9 +15,10 @@ export class OcapiProductsApi implements ProductsApi {
     this.api = new ShopApi.ProductsApi();
   }
 
-  protected buildGetProductOptions(locale?: string): ShopApi.GetProductOptions {
+  protected buildGetProductOptions(locale?: string, currency?: string): ShopApi.GetProductOptions {
     return {
       locale,
+      currency,
       allImages: true,
       expand: [
         'availability',
@@ -33,14 +34,14 @@ export class OcapiProductsApi implements ProductsApi {
     };
   }
 
-  async getProduct(id: string, viewType?: string, locale?: string): Promise<Product> {
-    const productResponse = await this.api.getProductsByID(id, this.buildGetProductOptions(locale));
+  async getProduct(id: string, viewType?: string, locale?: string, currency?: string): Promise<Product> {
+    const productResponse = await this.api.getProductsByID(id, this.buildGetProductOptions(locale, currency));
 
     return mapOcapiProduct(productResponse, viewType);
   }
 
-  async getProducts(ids: string[], viewType?: string, locale?: string): Promise<Product[]> {
-    const productResponse = await this.api.getProductsByIDs(ids, this.buildGetProductOptions(locale));
+  async getProducts(ids: string[], viewType?: string, locale?: string, currency?: string): Promise<Product[]> {
+    const productResponse = await this.api.getProductsByIDs(ids, this.buildGetProductOptions(locale, currency));
 
     return productResponse.data.map(
       (product) => mapOcapiProduct(product, viewType)
@@ -57,11 +58,12 @@ export class CapiProductsApi implements ProductsApi {
     this.api = new ProductApi.ShopperProducts(config);
   }
 
-  async getProduct(id: string, viewType?: string, locale?: string): Promise<Product> {
+  async getProduct(id: string, viewType?: string, locale?: string, currency?: string): Promise<Product> {
     const productResponse = await this.api.getProduct({
       parameters: {
         id,
         locale,
+        currency,
         allImages: true
       }
     });
@@ -69,10 +71,11 @@ export class CapiProductsApi implements ProductsApi {
     return mapProduct(productResponse, viewType);
   }
 
-  async getProducts(ids: string[], viewType?: string, locale?: string): Promise<Product[]> {
+  async getProducts(ids: string[], viewType?: string, locale?: string, currency?: string): Promise<Product[]> {
     const productResponse = await this.api.getProducts({
       parameters: {
         locale,
+        currency,
         ids: ids.join(','),
         allImages: true
       }
