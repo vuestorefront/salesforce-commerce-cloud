@@ -189,6 +189,7 @@ export interface ApiClientSettings {
   shortCode?: string;
   organizationId?: string;
   locale?: string;
+  currency?: string;
   capiJwtToken?: string;
   ocapiJwtToken?: string;
   cache?: boolean;
@@ -208,6 +209,7 @@ export interface ApiClientSettings {
     capiAuthToken?: string;
     ocapiAuthToken?: string;
     locale?: string;
+    currency?: string;
   },
   callbacks?: {
     auth?: {

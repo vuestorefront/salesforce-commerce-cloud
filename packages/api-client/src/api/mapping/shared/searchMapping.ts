@@ -130,11 +130,12 @@ export const mapSearchResponse = (apiResponse: Search.ShopperSearch.ProductSearc
   total: apiResponse.total
 });
 
-export const buildSearchOptions = (params: ProductSearchParams, locale?: string): SearchProductsParameters => {
+export const buildSearchOptions = (params: ProductSearchParams, locale?: string, currency?: string): SearchProductsParameters => {
   const searchOptions: SearchProductsParameters = {
     q: params.q,
     sort: params.sort,
     locale: locale,
+    currency: currency,
     offset: (params.page - 1) * params.itemsPerPage,
     limit: params.itemsPerPage,
     refine: []

@@ -30,6 +30,7 @@ export default {
       configuration.callbacks.auth = configuration.callbacks.auth || {};
       configuration.ocapiEndpoints = configuration.ocapiEndpoints || {};
       configuration.locale = req.headers[configuration.clientHeaders.locale] as string;
+      configuration.currency = req.headers[configuration.clientHeaders.currency] as string;
 
       Object.defineProperty(configuration, 'capiJwtToken', {
         enumerable: true,

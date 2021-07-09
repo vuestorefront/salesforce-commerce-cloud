@@ -15,8 +15,8 @@ export class OcapiProductSearchApi implements ProductSearchApi {
     this.api = new ShopApi.ProductSearchApi();
   }
 
-  async searchProducts(params: ProductSearchParams, locale?: string): Promise<ProductSearchResponse> {
-    const searchOptions = buildOcapiSearchOptions(params, locale);
+  async searchProducts(params: ProductSearchParams, locale?: string, currency?: string): Promise<ProductSearchResponse> {
+    const searchOptions = buildOcapiSearchOptions(params, locale, currency);
     const response = await this.api.getProductSearch(searchOptions);
 
     return mapOcapiSearchResponse(response);
@@ -32,9 +32,9 @@ export class CapiProductSearchApi implements ProductSearchApi {
     this.api = new Search.ShopperSearch(config);
   }
 
-  async searchProducts(params: ProductSearchParams, locale?: string): Promise<ProductSearchResponse> {
+  async searchProducts(params: ProductSearchParams, locale?: string, currency?: string): Promise<ProductSearchResponse> {
     const response = await this.api.productSearch({
-      parameters: buildSearchOptions(params, locale)
+      parameters: buildSearchOptions(params, locale, currency)
     });
 
     return mapSearchResponse(response);

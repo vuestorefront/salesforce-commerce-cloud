@@ -43,12 +43,12 @@ export interface CategoriesApi {
 }
 
 export interface ProductSearchApi {
-  searchProducts(params: ProductSearchParams, locale?: string): Promise<ProductSearchResponse>;
+  searchProducts(params: ProductSearchParams, locale?: string, currency?: string): Promise<ProductSearchResponse>;
 }
 
 export interface ProductsApi {
-  getProduct(id: string, viewType?: string, locale?: string): Promise<Product>;
-  getProducts(ids: string[], viewType?: string, locale?: string): Promise<Product[]>;
+  getProduct(id: string, viewType?: string, locale?: string, currency?: string): Promise<Product>;
+  getProducts(ids: string[], viewType?: string, locale?: string, currency?: string): Promise<Product[]>;
 }
 
 export interface WishlistsApi {
