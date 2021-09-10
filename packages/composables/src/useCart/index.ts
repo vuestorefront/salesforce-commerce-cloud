@@ -19,7 +19,8 @@ const params: UseCartFactoryParams<Cart, LineItem, Product, CouponItem> = {
     return { updatedCart, updatedCoupon };
   },
 
-  removeCoupon: async (context: Context, { currentCart, coupon }) => {
+  removeCoupon: async (context: Context, { currentCart, couponCode }) => {
+    const coupon = currentCart.couponItems.find((item) => item.code === couponCode);
     const updatedCart = await context.$sfcc.api.removeCouponFromCart(currentCart.basketId, coupon.couponItemId);
 
     return { updatedCart };
