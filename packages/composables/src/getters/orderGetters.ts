@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 
 import { UserOrderGetters, AgnosticOrderStatus } from '@vue-storefront/core';
-import { Order, CartItem } from '@vue-storefront/sfcc-api';
+import { Order, CartItem, OrderSearchResult } from '@vue-storefront/sfcc-api';
 
 export const getDate = (order: Order): string => (order && order.creationDate) || '';
 
@@ -43,7 +43,9 @@ export const getItemQty = (item: CartItem): number => (item && item.quantity) ||
 
 export const getItemPrice = (item: CartItem): number => (item && item.price) || 0;
 
-export const getFormattedPrice = (price: number) => price && String(price);
+export const getFormattedPrice = (price: number): string => price && String(price);
+
+export const getOrdersTotal = ({ total }: OrderSearchResult): number => total;
 
 const orderGetters: UserOrderGetters<Order, CartItem> = {
   getDate,
@@ -55,7 +57,8 @@ const orderGetters: UserOrderGetters<Order, CartItem> = {
   getItemName,
   getItemQty,
   getItemPrice,
-  getFormattedPrice
+  getFormattedPrice,
+  getOrdersTotal
 };
 
 export default orderGetters;

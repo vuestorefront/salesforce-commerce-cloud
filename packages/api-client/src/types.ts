@@ -118,6 +118,12 @@ export type OrderSearchParams = {
   offset?: number;
   limit?: number;
 };
+export type OrderSearchResult = {
+  offset: number;
+  count: number;
+  total: number;
+  results: Order[];
+};
 
 export type ApiClients = {
   CustomersApi: Apis.CustomersApi,
@@ -170,7 +176,7 @@ export type ApiSelectableEndpoints = {
   savePaymentInstrument(context: SfccIntegrationContext, cartId: string, paymentMethodId: string, amount: number, body: any): Promise<Cart>;
   updateCart(context: SfccIntegrationContext, cartId: string, contactInfo: ContactInfo, shippingAddress: OrderAddress, shippingMethodId: string, billingAddress: OrderAddress, paymentMethodId: string): Promise<Cart>;
   createOrder(context: SfccIntegrationContext, cartId: string): Promise<Order>;
-  getCustomerOrders(context: SfccIntegrationContext, params: OrderSearchParams): Promise<Order[]>;
+  getCustomerOrders(context: SfccIntegrationContext, params: OrderSearchParams): Promise<OrderSearchResult>;
 };
 
 export type Endpoints = AuthEndpoints & ApiSelectableEndpoints;

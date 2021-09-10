@@ -12,6 +12,7 @@ import {
   ContactInfo,
   OrderAddress,
   OrderSearchParams,
+  OrderSearchResult,
   SfccIntegrationContext
 } from '../../types';
 
@@ -35,7 +36,7 @@ export interface CustomersApi {
   updateCustomer(email: string, firstName: string, lastName: string): Promise<Customer>;
   updateCustomerPassword(currentPassword: string, newPassword: string): Promise<Customer>;
   getCarts(context: SfccIntegrationContext): Promise<Cart[]>;
-  getOrders(context: SfccIntegrationContext, params: OrderSearchParams): Promise<Order[]>;
+  getOrders(context: SfccIntegrationContext, params: OrderSearchParams): Promise<OrderSearchResult>;
 }
 
 export interface CategoriesApi {

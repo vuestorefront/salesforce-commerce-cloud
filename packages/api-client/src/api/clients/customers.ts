@@ -3,12 +3,19 @@ import { Customer, ClientConfig } from 'commerce-sdk';
 import { getObjectFromResponse } from '@commerce-apps/core';
 
 import { CustomersApi, TokensResponse } from './interfaces';
-import { Cart, Customer as ApiCustomer, CustomerAddress, Order, OrderSearchParams, SfccIntegrationContext } from '../../types';
 import { mapCart } from '../mapping/shared/cartMapping';
 import { mapOrder } from '../mapping/shared/orderMapping';
 import { mapOcapiCart } from '../mapping/ocapi/ocapiCartMapping';
 import { mapOcapiOrder } from '../mapping/ocapi/ocapiOrderMapping';
 import { getCustomerIdFromToken, getTokenFromAuthHeader } from '../helpers/jwt';
+import {
+  Cart,
+  Customer as ApiCustomer,
+  CustomerAddress,
+  OrderSearchParams,
+  OrderSearchResult,
+  SfccIntegrationContext
+} from '../../types';
 import {
   mapOcapiCustomer,
   mapOcapiCustomerAddress,
@@ -262,7 +269,7 @@ export class OcapiCustomersApi extends BaseCustomersApi implements CustomersApi 
     return await Promise.all(mappedCarts || []);
   }
 
-  async getOrders(context: SfccIntegrationContext, params: OrderSearchParams): Promise<Order[]> {
+  async getOrders(context: SfccIntegrationContext, params: OrderSearchParams): Promise<OrderSearchResult> {
     const customerId = this.getCustomerId(true);
     const ordersResponse = customerId && await this.api.getCustomersByIDOrders(customerId, {
       ...params,
@@ -271,10 +278,22 @@ export class OcapiCustomersApi extends BaseCustomersApi implements CustomersApi 
     });
 
     if (ordersResponse) {
-      return await Promise.all(ordersResponse.data.map(mapOcapiOrder.bind(null, context)));
+      const orders = await Promise.all(ordersResponse.data.map(mapOcapiOrder.bind(null, context)));
+
+      return {
+        results: orders,
+        offset: params.offset,
+        total: ordersResponse.total,
+        count: orders.length
+      };
     }
 
-    return [];
+    return {
+      results: [],
+      offset: 0,
+      total: 0,
+      count: 0
+    };
   }
 }
 
@@ -416,7 +435,7 @@ export class CapiCustomersApi extends BaseCustomersApi implements CustomersApi {
     return await Promise.all(mappedCarts || []) as Cart[];
   }
 
-  async getOrders(context: SfccIntegrationContext, params: OrderSearchParams): Promise<Order[]> {
+  async getOrders(context: SfccIntegrationContext, params: OrderSearchParams): Promise<OrderSearchResult> {
     const customerId = this.getCustomerId(true);
     const ordersResponse = customerId && await this.api.getCustomerOrders({
       parameters: {
@@ -426,9 +445,21 @@ export class CapiCustomersApi extends BaseCustomersApi implements CustomersApi {
     });
 
     if (ordersResponse) {
-      return ordersResponse.data.map(mapOrder.bind(null, context));
+      const orders = await Promise.all(ordersResponse.data.map(mapOrder.bind(null, context)));
+
+      return {
+        results: orders,
+        offset: params.offset,
+        total: ordersResponse.total,
+        count: ordersResponse.data.length
+      };
     }
 
-    return [];
+    return {
+      results: [],
+      offset: 0,
+      total: 0,
+      count: 0
+    };
   }
 }
