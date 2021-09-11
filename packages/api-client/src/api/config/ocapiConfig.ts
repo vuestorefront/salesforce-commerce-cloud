@@ -8,13 +8,18 @@ export function buildConfig(apiConfig: ApiClientSettings): ShopApi.ApiConfig {
     cache: apiConfig.cache,
     enableCookies: false,
     overrideHttpPut: true,
-    oauth2AccessToken: apiConfig.ocapiJwtToken,
     defaultHeaders: {}
   };
 
   if (apiConfig.ocapiClientId) {
     ocapiConfig.defaultHeaders['x-dw-client-id'] = apiConfig.ocapiClientId;
   }
+
+  Object.defineProperty(ocapiConfig, 'oauth2AccessToken', {
+    get() {
+      return apiConfig.ocapiJwtToken;
+    }
+  });
 
   return ocapiConfig;
 }

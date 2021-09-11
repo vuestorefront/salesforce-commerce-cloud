@@ -13,13 +13,18 @@ export function buildConfig(apiConfig: ApiClientSettings): ClientConfig {
     }
   };
 
-  if (apiConfig.capiJwtToken) {
-    clientConfig.headers.authorization = `Bearer ${apiConfig.capiJwtToken}`;
-  }
-
   if (!apiConfig.cache) {
     clientConfig.cacheManager = null;
   }
+
+  Object.defineProperty(clientConfig.headers, 'authorization', {
+    enumerable: true,
+    get() {
+      if (apiConfig.capiJwtToken) {
+        return `Bearer ${apiConfig.capiJwtToken}`;
+      }
+    }
+  });
 
   return clientConfig;
 }
