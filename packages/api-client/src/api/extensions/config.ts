@@ -4,13 +4,13 @@ import { encode, decode } from 'js-base64';
 import { ApiClientExtension } from '@vue-storefront/core';
 import { ApiClientSettings } from '../../types';
 
-const updateTokenIssuer = (token: string, compareIssuer: string, targetIssuer: string) => {
+const updateTokenField = (token: string, compare: string, target: string, field: string) => {
   if (token) {
     const [encodedHeader, encodedPayload, signature] = token.split('.');
     const payload = encodedPayload && JSON.parse(decode(encodedPayload));
 
-    if (payload && payload.iss === compareIssuer) {
-      const updatedPayload = { ...payload, iss: targetIssuer };
+    if (payload && payload[field] === compare) {
+      const updatedPayload = { ...payload, [field]: target };
       const encodedUpdatedPayload = encode(JSON.stringify(updatedPayload), true);
 
       return `${encodedHeader}.${encodedUpdatedPayload}.${signature}`;
@@ -21,6 +21,12 @@ const updateTokenIssuer = (token: string, compareIssuer: string, targetIssuer: s
 
   return null;
 };
+
+const updateTokenAudience = (token: string, compare: string, target: string) =>
+  updateTokenField(token, compare, target, 'aud');
+
+const updateTokenIssuer = (token: string, compare: string, target: string) =>
+  updateTokenField(token, compare, target, 'iss');
 
 export default {
   name: 'sfcc-config',
@@ -39,10 +45,17 @@ export default {
           const headerName = configuration.clientHeaders.capiAuthToken;
           const cookieName = configuration.cookieNames.capiAuthToken;
 
-          return req.headers[headerName] || req.cookies[cookieName];
+          return updateTokenAudience(
+            req.headers[headerName] || req.cookies[cookieName],
+            null,
+            configuration.capiClientId
+          );
         },
         set(newToken: string) {
-          res.set(configuration.clientHeaders.capiAuthToken, newToken);
+          res.set(
+            configuration.clientHeaders.capiAuthToken,
+            updateTokenAudience(newToken, configuration.capiClientId, null)
+          );
         }
       });
 
