@@ -41,6 +41,8 @@ module.exports = {
           [createCustomerAddress]: true,
           [updateCustomerAddress]: true,
           [deleteCustomerAddress]: true,
+          [forgotPasswordReset]: true,
+          [forgotPasswordTriggerReset]: true,
           [createCustomer]: true,
           [updateCustomer]: true,
           [updateCustomerPassword]: true,
@@ -77,6 +79,12 @@ module.exports = {
           ocapiAuthToken: process.env.SFCC_CLIENT_HEADERS_OCAPI_TOKEN || 'x-vsf-sfcc-ocapi-token',
           currency: process.env.SFCC_CLIENT_HEADERS_CURRENCY || 'x-vsf-sfcc-currency',
           locale: process.env.SFCC_CLIENT_HEADERS_LOCALE || 'x-vsf-sfcc-locale'
+        },
+        [customer]: {
+          [loginType]: 'email',
+          [passwordResetType]: 'external',
+          [passwordResetDeliverToken]: ({ login, token }) => {},
+          [passwordResetLogToken]: false
         }
       }
     }
@@ -102,3 +110,10 @@ module.exports = {
   - `ocapiAuthToken` - The name of the HTTP header in which the client will send the current JWT token for OCAPI to the API
   - `currency` - The name of the HTTP header in which the client will send the currently selected currency's code to the API
   - `locale` - The name of the HTTP header in which the client will send the current locale to the API
+- `customer` - Configurations that drive customer-realated behaviours
+  - `loginType` - The type of identifier used by customers to sign in; supports `email` or `login` (username) - not using an email requires theme changes
+  - `passwordResetType` - The type of password reset that will be used when trigered by the customer; supported values:
+    - `external` (default) - A token will be generated and delegated to a VFS-provided delivery function. **Requires `passwordResetDeliverToken` to be provided**
+    - `internal` - The token generation and delivery will be handled internally in SFCC, by using the process described in [the documentation](https://documentation.b2c.commercecloud.salesforce.com/DOC2/topic/com.demandware.dochelp/OCAPI/current/shop/Resources/Customers.html#id152104953__id1716137738). Requires the `dw.ocapi.shop.customers.password_reset.afterPOST` hook to be implemented. **OCAPI only**
+  - `passwordResetDeliverToken` - Function that will be called by the `external` password reset process to get the token to the customer through a channel independent of the storefront.
+  - `passwordResetLogToken` - If enabled, and if the `external` reset process is used, will log the generated reset token to the backend's *stdout* for debugging purposes

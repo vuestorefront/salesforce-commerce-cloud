@@ -3,6 +3,7 @@ import cartGetters from './cartGetters';
 import categoryGetters from './categoryGetters';
 import checkoutGetters from './checkoutGetters';
 import facetGetters from './facetGetters';
+import forgotPasswordGetters from './forgotPasswordGetters';
 import productGetters from './productGetters';
 import reviewGetters from './reviewGetters';
 import userGetters from './userGetters';
@@ -16,6 +17,7 @@ export {
   categoryGetters,
   checkoutGetters,
   facetGetters,
+  forgotPasswordGetters,
   productGetters,
   reviewGetters,
   userGetters,

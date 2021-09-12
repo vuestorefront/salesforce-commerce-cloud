@@ -9,6 +9,8 @@ module.exports = {
         siteId: process.env.SFCC_SITE_ID,
         capiClientId: process.env.SFCC_CAPI_CLIENT_ID,
         ocapiClientId: process.env.SFCC_OCAPI_CLIENT_ID,
+        capiClientSecret: process.env.SFCC_CAPI_CLIENT_SECRET,
+        ocapiClientSecret: process.env.SFCC_OCAPI_CLIENT_SECRET,
         ocapiVersion: process.env.SFCC_OCAPI_VERSION,
         commerceApiVersion: process.env.SFCC_CAPI_VERSION || 'v1',
         shortCode: process.env.SFCC_SHORT_CODE,

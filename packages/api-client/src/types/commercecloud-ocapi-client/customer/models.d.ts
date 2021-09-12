@@ -127,4 +127,26 @@ declare module 'commercecloud-ocapi-client' {
     suffix?: string;
     title?: string;
   }
+
+  export type PasswordReset = {
+    identification: string;
+    type: 'email' | 'login';
+  };
+
+  export type ResetPasswordTokenRequest = {
+    login: string;
+  };
+
+  export type ResetPasswordTokenResult = {
+    email: string;
+    expires_in_minutes: number;
+    login: string;
+    reset_token: string;
+  };
+
+  export type ResetPasswordRequest = {
+    login: string;
+    reset_token: string;
+    new_password: string;
+  };
 }

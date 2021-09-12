@@ -127,6 +127,7 @@ export type OrderSearchResult = {
 
 export type ApiClients = {
   CustomersApi: Apis.CustomersApi,
+  CustomersPasswordResetApi: Apis.CustomersPasswordResetApi,
   CategoriesApi: Apis.CategoriesApi,
   ProductsApi: Apis.ProductsApi,
   ProductSearchApi: Apis.ProductSearchApi,
@@ -177,6 +178,8 @@ export type ApiSelectableEndpoints = {
   updateCart(context: SfccIntegrationContext, cartId: string, contactInfo: ContactInfo, shippingAddress: OrderAddress, shippingMethodId: string, billingAddress: OrderAddress, paymentMethodId: string): Promise<Cart>;
   createOrder(context: SfccIntegrationContext, cartId: string): Promise<Order>;
   getCustomerOrders(context: SfccIntegrationContext, params: OrderSearchParams): Promise<OrderSearchResult>;
+  forgotPasswordTriggerReset(context: SfccIntegrationContext, login: string): Promise<void>;
+  forgotPasswordReset(context: SfccIntegrationContext, login: string, resetToken: string, newPassword: string): Promise<void>;
 };
 
 export type Endpoints = AuthEndpoints & ApiSelectableEndpoints;
@@ -189,6 +192,8 @@ export interface ApiClientSettings {
   origin: string;
   capiClientId?: string;
   ocapiClientId?: string;
+  capiClientSecret?: string;
+  ocapiClientSecret?: string;
   siteId: string;
   ocapiVersion: string;
   commerceApiVersion?: string;
@@ -222,7 +227,13 @@ export interface ApiClientSettings {
       onSessionTimeout?: (isGuest: boolean) => void;
       onTokenChange?: (newCapiToken: string, newOcapiToken: string) => void;
     };
-  };
+  },
+  customer: {
+    loginType: 'email' | 'login';
+    passwordResetType: 'internal' | 'external';
+    passwordResetLogToken: boolean;
+    passwordResetDeliverToken: (params: { login: string, token: string }) => Promise<any>;
+  },
   overrides?: Partial<Endpoints>;
 }
 

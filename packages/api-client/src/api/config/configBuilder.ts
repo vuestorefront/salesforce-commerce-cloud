@@ -8,6 +8,7 @@ import { CapiCategoriesApi, OcapiCategoriesApi } from '../clients/categories';
 import { CapiProductsApi, OcapiProductsApi } from '../clients/products';
 import { CapiWishlistsApi, OcapiWishlistsApi } from '../clients/wishlists';
 import { CapiProductSearchApi, OcapiProductSearchApi } from '../clients/productSearch';
+import { CapiCustomersPasswordResetApi, OcapiCustomersPasswordResetApi } from '../clients/customersPasswordReset';
 import { ApiClients, ApiClientSettings } from '../../types';
 import {
   CartsApi,
@@ -16,7 +17,8 @@ import {
   CategoriesApi,
   ProductsApi,
   WishlistsApi,
-  ProductSearchApi
+  ProductSearchApi,
+  CustomersPasswordResetApi
 } from '../clients/interfaces';
 
 export const buildClientConfig = (settings: ApiClientSettings): ApiClients => {
@@ -40,6 +42,12 @@ export const buildClientConfig = (settings: ApiClientSettings): ApiClients => {
       settings,
       new CapiCustomersApi(capiConfig, ocapiConfig),
       new OcapiCustomersApi(capiConfig, ocapiConfig)
+    ),
+
+    CustomersPasswordResetApi: createClientProxy<CustomersPasswordResetApi>(
+      settings,
+      new CapiCustomersPasswordResetApi(settings, capiConfig),
+      new OcapiCustomersPasswordResetApi(settings, ocapiConfig)
     ),
 
     ProductsApi: createClientProxy<ProductsApi>(

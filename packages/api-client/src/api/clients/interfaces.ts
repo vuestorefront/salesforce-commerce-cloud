@@ -39,6 +39,12 @@ export interface CustomersApi {
   getOrders(context: SfccIntegrationContext, params: OrderSearchParams): Promise<OrderSearchResult>;
 }
 
+export interface CustomersPasswordResetApi {
+  triggerPasswordReset(login: string, type: 'email' | 'login'): Promise<void>;
+  createPasswordResetToken(login: string): Promise<string>;
+  resetPassword(login: string, resetToken: string, newPassword: string): Promise<void>;
+}
+
 export interface CategoriesApi {
   getCategory(id: string, levels?: number, locale?: string): Promise<Category>;
 }

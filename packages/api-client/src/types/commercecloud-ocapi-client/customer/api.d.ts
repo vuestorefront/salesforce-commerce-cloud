@@ -82,5 +82,8 @@ declare module 'commercecloud-ocapi-client' {
     postCustomersByIDProductLists(customerId: string, body: { type: 'wish_list' }): Promise<CustomerProductList>;
     postCustomersByIDProductListsByIDItems(customerId: string, listId: string, body: AddCustomerProductListItemBody): Promise<CustomerProductListItem>;
     deleteCustomersByIDProductListsByIDItemsByID(customerId: string, listId: string, itemId: string): Promise<void>;
+    postCustomersPasswordReset(body: PasswordReset): Promise<void>;
+    postCustomersPasswordActionsCreateResetToken(body: ResetPasswordTokenRequest): Promise<ResetPasswordTokenResult>;
+    postCustomersPasswordActionsReset(body: ResetPasswordRequest): Promise<void>;
   }
 }

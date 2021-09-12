@@ -32,6 +32,8 @@ import createOrder from './createOrder';
 import getCustomerOrders from './getCustomerOrders';
 import getApplicablePaymentMethods from './getApplicablePaymentMethods';
 import getApplicableShippingMethods from './getApplicableShippingMethods';
+import forgotPasswordTriggerReset from './forgotPasswordTriggerReset';
+import forgotPasswordReset from './forgotPasswordReset';
 
 import { wrapAuthHandler } from './helpers/auth';
 
@@ -69,6 +71,8 @@ const endpoints = {
   getCustomerOrders,
   getApplicablePaymentMethods,
   getApplicableShippingMethods,
-}
+  forgotPasswordTriggerReset,
+  forgotPasswordReset
+};
 
 export default wrapAuthHandler(endpoints) as Endpoints;
