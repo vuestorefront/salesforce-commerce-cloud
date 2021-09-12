@@ -91,28 +91,21 @@ export class CapiWishlistsApi implements WishlistsApi {
   }
 
   async addToWishlist(context: SfccIntegrationContext, listId: string, productId: string): Promise<Wishlist> {
-    try {
-      const result = this.customerId && await this.api.createCustomerProductListItem({
-        parameters: {
-          listId,
-          customerId: this.customerId
-        },
-        body: {
-          productId,
-          type: 'product',
-          public: true,
-          quantity: 1,
-          priority: 1
-        }
-      });
+    const result = this.customerId && await this.api.createCustomerProductListItem({
+      parameters: {
+        listId,
+        customerId: this.customerId
+      },
+      body: {
+        productId,
+        type: 'product',
+        public: true,
+        quantity: 1,
+        priority: 1
+      }
+    });
 
-      console.log(result);
-      console.log(result && await this.getWishlist(context));
-
-      return result && await this.getWishlist(context);
-    } catch (e) {
-      console.log(e);
-    }
+    return result && await this.getWishlist(context);
   }
 
   async removeFromWishlist(context: SfccIntegrationContext, listId: string, itemId: string): Promise<Wishlist> {
