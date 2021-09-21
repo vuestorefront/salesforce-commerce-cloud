@@ -24,6 +24,8 @@
     "camelcase-keys": "~6.1.2",
     "commerce-sdk": "^2.4.0",
     "commercecloud-ocapi-client": "^0.2.0",
+    "currency-codes": "^2.1.0",
+    "currency-symbol-map": "^5.0.1",
     "js-base64": "^3.6.0"
   },
   "files": [

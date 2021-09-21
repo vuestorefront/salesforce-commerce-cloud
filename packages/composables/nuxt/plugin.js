@@ -3,9 +3,25 @@ import { integrationPlugin, VSF_LOCALE_COOKIE, VSF_CURRENCY_COOKIE } from '@vue-
 
 const moduleOptions = JSON.parse('<%= JSON.stringify(options) %>');
 
-const getAxiosConfig = ({ app, integration, req }) => {
+const getLocaleSiteId = (i18n) => {
+  const { locales, locale } = i18n;
+
+  const localeConfig = locales.find(
+    (localeConfig) => typeof localeConfig === 'object' && localeConfig.code === locale
+  );
+
+  if (localeConfig) {
+    return localeConfig.siteId;
+  }
+
+  return null;
+}
+
+const getAxiosConfig = ({ app, integration, req, siteId }) => {
+  const siteIdCookie = moduleOptions.cookieNames.siteId;
   const capiAuthCookie = moduleOptions.cookieNames.capiAuthToken;
   const ocapiAuthCookie = moduleOptions.cookieNames.ocapiAuthToken;
+  const siteIdHeader = moduleOptions.clientHeaders.siteId;
   const capiAuthHeader = moduleOptions.clientHeaders.capiAuthToken;
   const ocapiAuthHeader = moduleOptions.clientHeaders.ocapiAuthToken;
   const currencyHeader = moduleOptions.clientHeaders.currency;
@@ -13,6 +29,7 @@ const getAxiosConfig = ({ app, integration, req }) => {
 
   return {
     headers: {
+      [siteIdHeader]: app.$cookies.get(siteIdCookie) || siteId || '',
       [capiAuthHeader]: app.$cookies.get(capiAuthCookie) || '',
       [ocapiAuthHeader]: app.$cookies.get(ocapiAuthCookie) || '',
       [currencyHeader]: app.$cookies.get(VSF_CURRENCY_COOKIE),
@@ -59,7 +76,11 @@ const getAxiosConfig = ({ app, integration, req }) => {
 }
 
 export default integrationPlugin(({ app, integration, req }) => {
+  const siteId = getLocaleSiteId(app.i18n) || moduleOptions.siteId;
+
   integration.configure('sfcc', {
-    axios: getAxiosConfig({ app, integration, req })
+    siteId,
+    allSiteIds: moduleOptions.allSiteIds,
+    axios: getAxiosConfig({ app, integration, req, siteId })
   });
 });

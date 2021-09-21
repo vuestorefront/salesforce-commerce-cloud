@@ -19,4 +19,5 @@ export { default as useUser } from './useUser';
 export { default as useUserOrder } from './useUserOrder';
 export { default as useUserShipping } from './useUserShipping';
 export { default as useWishlist } from './useWishlist';
+export { default as useStore } from './useStore';
 export * from './getters';

@@ -1,4 +1,4 @@
-import { FacetSearchResult } from '@vue-storefront/core';
+import { AgnosticStore, FacetSearchResult } from '@vue-storefront/core';
 
 import {
   ProductSearchRefinement,
@@ -105,4 +105,9 @@ export type AgnosticPaymentMethod = {
   label: string;
   value: string;
   description?: string;
+};
+
+export type StoresData = {
+  stores: AgnosticStore[];
+  currentStore: AgnosticStore;
 };

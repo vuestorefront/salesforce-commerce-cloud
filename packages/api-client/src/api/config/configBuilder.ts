@@ -1,6 +1,7 @@
 import { buildConfig as buildCapiConfig } from './capiConfig';
 import { buildConfig as buildOcapiConfig } from './ocapiConfig';
 import { createClientProxy } from '../clients/factory';
+import { OcapiSiteApi } from '../clients/site';
 import { CapiCartsApi, OcapiCartsApi } from '../clients/carts';
 import { CapiOrdersApi, OcapiOrdersApi } from '../clients/orders';
 import { CapiCustomersApi, OcapiCustomersApi } from '../clients/customers';
@@ -11,6 +12,7 @@ import { CapiProductSearchApi, OcapiProductSearchApi } from '../clients/productS
 import { CapiCustomersPasswordResetApi, OcapiCustomersPasswordResetApi } from '../clients/customersPasswordReset';
 import { ApiClients, ApiClientSettings } from '../../types';
 import {
+  SiteApi,
   CartsApi,
   OrdersApi,
   CustomersApi,
@@ -26,6 +28,12 @@ export const buildClientConfig = (settings: ApiClientSettings): ApiClients => {
   const ocapiConfig = buildOcapiConfig(settings);
 
   return {
+    SiteApi: createClientProxy<SiteApi>(
+      settings,
+      null,
+      new OcapiSiteApi(ocapiConfig)
+    ),
+
     CartsApi: createClientProxy<CartsApi>(
       settings,
       new CapiCartsApi(capiConfig),

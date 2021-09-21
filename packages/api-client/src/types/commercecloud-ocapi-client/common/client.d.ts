@@ -15,6 +15,8 @@ declare module 'commercecloud-ocapi-client' {
 
   export class ApiClient {
     static instance: ApiClient;
+
+    basePath: string;
     defaultHeaders: {
       authorization?: string;
     };

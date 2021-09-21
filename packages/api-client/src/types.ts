@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define, camelcase */
 
 import { AxiosInstance } from 'axios';
-import { ApiInstance, IntegrationContext } from '@vue-storefront/core';
+import { AgnosticStore, ApiInstance, IntegrationContext } from '@vue-storefront/core';
 import * as Apis from './api/clients/interfaces';
 import {
   Checkout as SdkCheckout,
@@ -126,6 +126,7 @@ export type OrderSearchResult = {
 };
 
 export type ApiClients = {
+  SiteApi: Apis.SiteApi,
   CustomersApi: Apis.CustomersApi,
   CustomersPasswordResetApi: Apis.CustomersPasswordResetApi,
   CategoriesApi: Apis.CategoriesApi,
@@ -147,6 +148,7 @@ export type AuthEndpoints = {
 };
 
 export type ApiSelectableEndpoints = {
+  getSite(context: SfccIntegrationContext, siteId?: string): Promise<AgnosticStore>;
   getCustomer(context: SfccIntegrationContext): Promise<Customer>;
   getCustomerAddresses(context: SfccIntegrationContext): Promise<CustomerAddress[]>;
   createCustomerAddress(context: SfccIntegrationContext, address: CustomerAddress): Promise<CustomerAddress>;
@@ -195,6 +197,7 @@ export interface ApiClientSettings {
   capiClientSecret?: string;
   ocapiClientSecret?: string;
   siteId: string;
+  allSiteIds: string[];
   ocapiVersion: string;
   commerceApiVersion?: string;
   shortCode?: string;
@@ -213,10 +216,12 @@ export interface ApiClientSettings {
     [T in keyof ApiSelectableEndpoints]?: boolean;
   },
   cookieNames?: {
+    siteId?: string;
     capiAuthToken?: string;
     ocapiAuthToken?: string;
   },
   clientHeaders: {
+    siteId?: string;
     capiAuthToken?: string;
     ocapiAuthToken?: string;
     locale?: string;
@@ -226,6 +231,9 @@ export interface ApiClientSettings {
     auth?: {
       onSessionTimeout?: (isGuest: boolean) => void;
       onTokenChange?: (newCapiToken: string, newOcapiToken: string) => void;
+    };
+    site?: {
+      onSiteChange?: (site?: AgnosticStore) => void;
     };
   },
   customer: {

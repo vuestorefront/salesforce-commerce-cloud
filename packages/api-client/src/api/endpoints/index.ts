@@ -32,6 +32,7 @@ import createOrder from './createOrder';
 import getCustomerOrders from './getCustomerOrders';
 import getApplicablePaymentMethods from './getApplicablePaymentMethods';
 import getApplicableShippingMethods from './getApplicableShippingMethods';
+import getSite from './getSite';
 import forgotPasswordTriggerReset from './forgotPasswordTriggerReset';
 import forgotPasswordReset from './forgotPasswordReset';
 
@@ -71,6 +72,7 @@ const endpoints = {
   getCustomerOrders,
   getApplicablePaymentMethods,
   getApplicableShippingMethods,
+  getSite,
   forgotPasswordTriggerReset,
   forgotPasswordReset
 };

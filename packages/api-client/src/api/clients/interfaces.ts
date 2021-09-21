@@ -17,10 +17,15 @@ import {
 } from '../../types';
 
 import { Checkout } from 'commerce-sdk';
+import { AgnosticStore } from '@vue-storefront/core';
 
 export type TokensResponse = {
   capiToken?: string;
   ocapiToken?: string;
+}
+
+export interface SiteApi {
+  getSite(currentLocale: string, siteId?: string): Promise<AgnosticStore>;
 }
 
 export interface CustomersApi {
