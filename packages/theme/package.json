@@ -1,6 +1,6 @@
 {
   "name": "@vue-storefront/sfcc-theme",
-  "version": "1.0.0-beta.11",
+  "version": "1.0.0-beta.12",
   "private": true,
   "scripts": {
     "dev": "nuxt",
@@ -16,7 +16,7 @@
     "@vue-storefront/middleware": "^2.3.4",
     "@vue-storefront/nuxt": "^2.3.4",
     "@vue-storefront/nuxt-theme": "^2.3.4",
-    "@vue-storefront/sfcc": "^1.0.0-beta.11",
+    "@vue-storefront/sfcc": "^1.0.0-beta.12",
     "cookie-universal-nuxt": "^2.1.3",
     "core-js": "^2.6.5",
     "nuxt": "^2.13.3",
